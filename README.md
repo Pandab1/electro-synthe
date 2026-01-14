@@ -1,8 +1,7 @@
-# Projet de base 
+# Électro-synthé - Junia ISEN AP3
 
-Ce projet établit une architecture de base avec meson pour le développement C.
+Projet de synthétiseur logiciel (générer des sons de synthèse numérique) 
 
-Vous êtes libres de modifier et renommer les variables, cibles de compilations et autres fichiers importants. Vous pouvez également utiliser d'autres fonctionnalités de [meson](https://mesonbuild.com/index.html)
 
 ## Installation
 
