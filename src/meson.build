@@ -1,7 +1,8 @@
 libbase_project = library('baseproject',
   sources: ['custom_math.c'],
   include_directories: inc,
-  install: true
+  install: true,
+  dependencies: [mathlib_dep]
 )
 
 libbase_project_dep = declare_dependency(

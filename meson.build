@@ -5,6 +5,8 @@ project(
   version : '0.1',
   default_options : ['warning_level=3'],
 )
+cc=meson.get_compiler('c')
+mathlib_dep = cc.find_library('m')
 
 inc = include_directories('include')
 
