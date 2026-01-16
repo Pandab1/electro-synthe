@@ -10,11 +10,12 @@
 #include "../include/gui_interface.h"
 #include "../include/gui_components.h"
 
+float TextToFloat(const char *text);
 
+#define RAYGUI_IMPLEMENTATION
 #include "../include/raygui.h"
 
-/* ----------------- Utils ----------------- */
-
+// Polyfills for Raylib 5.0 compatibility
 float TextToFloat(const char *text)
 {
     return strtof(text, NULL);
