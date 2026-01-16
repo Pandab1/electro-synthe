@@ -4,18 +4,12 @@
 
 #include "../include/gui_interface.h"
 
-// Prototype AVANT raygui
 float TextToFloat(const char *text);
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wunused-parameter"
 #define RAYGUI_IMPLEMENTATION
 #include "../include/raygui.h"
-#pragma GCC diagnostic pop
 
 // Polyfills for Raylib 5.0 compatibility
-
-// Implémentation
 float TextToFloat(const char *text)
 {
     return strtof(text, NULL);
