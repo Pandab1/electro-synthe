@@ -16,6 +16,21 @@ project(
 cc=meson.get_compiler('c')
 mathlib_dep = cc.find_library('m')
 
+cmake = import('cmake')
+raylib_opts = cmake.subproject_options()
+raylib_opts.add_cmake_defines({'BUILD_EXAMPLES': 'OFF', 'BUILD_GAMES': 'OFF', 'CMAKE_POLICY_VERSION_MINIMUM': '3.5'})
+raylib_sub = cmake.subproject('raylib', options: raylib_opts)
+raylib_dep = raylib_sub.dependency('raylib')
+
+if host_machine.system() == 'darwin'
+  raylib_dep = declare_dependency(
+    dependencies: [
+      raylib_dep,
+      dependency('appleframeworks', modules: ['IOKit', 'Cocoa', 'OpenGL', 'CoreVideo'])
+    ]
+  )
+endif
+
 inc = include_directories('include')
 
 # ███╗   ███╗██╗███╗   ██╗██╗ █████╗ ██╗   ██╗██████╗ ██╗ ██████╗ 
