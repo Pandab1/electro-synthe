@@ -71,8 +71,8 @@ int main(void) {
   const int screenWidth = 800;
   const int screenHeight = 450;
 
-  InitWindow(screenWidth, screenHeight, "Electro-synthé");
-  SetTargetFPS(60);
+InitWindow(screenWidth, screenHeight, "Electro-Synthe");
+SetTargetFPS(60);
 
   // Init state
   AppState myState = {
