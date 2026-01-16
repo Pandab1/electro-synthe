@@ -2,6 +2,8 @@
 #include <string.h>
 #include <stdint.h>
 #include <math.h>
+#include "raylib.h"
+#include "../include/gui_interface.h"
 
 typedef int16_t i16;
 typedef uint16_t u16;
@@ -22,6 +24,34 @@ void write_le_32(FILE* f, u32 n){
 #define FREQ 44100
 
 int main(void){
+  const int screenWidth = 800;
+  const int screenHeight = 450;
+
+  InitWindow(screenWidth, screenHeight, "Electro-synthé");
+  SetTargetFPS(60);
+
+  // Init state
+  AppState myState = {
+    .showMessage = false,
+    .darkMode = false,
+    .sliderValue = 50.0f
+};
+
+  InitGuiStyle();
+
+  while (!WindowShouldClose())
+  {
+    BeginDrawing();
+
+    // gui.c
+    DrawAppInterface(&myState);
+    EndDrawing();
+  }
+
+  CloseWindow();
+
+  return 0;
+
   FILE* f = fopen("test.wav", "wb");
 
   struct {

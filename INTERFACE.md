@@ -1,5 +1,9 @@
 # Interface UI – Synthétiseur
 
+## 0. Choix techniques
+
+Utilisation de la bibliothèque Raylib avec Raygui pour l'interface GUI.
+
 ## 1. Navigation générale
 
 ### 1.1 Menu latéral (sections)
