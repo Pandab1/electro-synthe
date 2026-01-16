@@ -14,7 +14,11 @@ project(
 #  ╚═════╝ ╚═════╝ ╚═╝     ╚═╝╚═╝     ╚═╝╚══════╝╚══════╝╚═╝  ╚═╝
 
 cc=meson.get_compiler('c')
-mathlib_dep = cc.find_library('m')
+if host_machine.system() != 'windows'
+  mathlib_dep = cc.find_library('m', required : false)
+else
+  mathlib_dep = []
+endif
 
 cmake = import('cmake')
 raylib_opts = cmake.subproject_options()
