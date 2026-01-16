@@ -1,8 +1,8 @@
 libbase_project = library('baseproject',
-  sources: ['custom_math.c', 'utils_files.c'],
+  sources: ['gui.c', 'custom_math.c', 'utils_files.c'],
   include_directories: inc,
   install: true,
-  dependencies: [mathlib_dep]
+  dependencies: [mathlib_dep, raylib_dep]
 )
 
 libbase_project_dep = declare_dependency(
