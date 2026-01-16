@@ -24,11 +24,11 @@ void write_le_32(FILE* f, u32 n){
 #define FREQ 44100
 
 int main(void){
-  const int screenWidth = 800;
-  const int screenHeight = 450;
+  const int screenWidth = 1200;
+  const int screenHeight = 1300;
 
-  InitWindow(screenWidth, screenHeight, "Electro-synthé");
-  SetTargetFPS(60);
+InitWindow(screenWidth, screenHeight, "Electro-Synthe");
+SetTargetFPS(60);
 
   // Init state
   AppState myState = {
