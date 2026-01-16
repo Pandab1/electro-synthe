@@ -63,3 +63,4 @@ dkms.conf
 *devenv*
 .DS_Store
 subprojects/.wraplock
+subprojects/raylib/
