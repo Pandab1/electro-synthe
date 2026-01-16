@@ -1,4 +1,4 @@
-libbase_project = library('baseproject',
+libbase_project = static_library('baseproject',
   sources: ['gui.c', 'custom_math.c'],
   include_directories: inc,
   install: true,
