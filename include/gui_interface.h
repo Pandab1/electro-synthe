@@ -38,5 +38,6 @@ typedef struct AppState {
 // Fonctions publiques GUI
 void InitGuiStyle(void);
 void DrawAppInterface(AppState *etat);
+float GetAppDPI(void);
 
 #endif
