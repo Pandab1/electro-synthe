@@ -84,6 +84,10 @@ static void DessinerMenuLateral(AppState *etat)
     DrawLine(x, y, x + w, y, (Color){160,160,160,255});
     y += (int)(10*dpi);
 
+    DessinerBoutonMenu(etat, "Oscillator", PAGE_OSCILLATOR, xBouton, y, largeurBouton, hauteurBouton); y += hauteurBouton + espace;
+    DessinerBoutonMenu(etat, "Enveloppe",  PAGE_ENVELOPPE,  xBouton, y, largeurBouton, hauteurBouton); y += hauteurBouton + espace;
+    DessinerBoutonMenu(etat, "Output",     PAGE_OUTPUT,     xBouton, y, largeurBouton, hauteurBouton); y += hauteurBouton + espace;
+    DessinerBoutonMenu(etat, "Help",       PAGE_HELP,       xBouton, y, largeurBouton, hauteurBouton); y += hauteurBouton + espace;
     DrawText("MOTEUR AUDIO", x + (int)(10*dpi), y, (int)(14*dpi), GRAY);
     y += (int)(20*dpi);
 

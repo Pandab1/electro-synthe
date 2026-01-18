@@ -45,9 +45,9 @@ static float CalculerY(int x, int largeur, float cyclesVisibles, float amp, Form
     return s * amp;
 }
 
-// =====================================================================
-// Page Oscillateur
-// =====================================================================
+//======================================================================
+// Draw the page
+//======================================================================
 void DessinerPageOscillateur(AppState *etat, int zoneX)
 {
     float dpi = GetAppDPI();
