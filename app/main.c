@@ -24,18 +24,18 @@ void write_le_32(FILE* f, u32 n){
 #define FREQ 44100
 
 int main(void){
-  const int screenWidth = 1200;
-  const int screenHeight = 1300;
+  const int screenWidth = 1000;
+  const int screenHeight = 800;
 
-InitWindow(screenWidth, screenHeight, "Electro-Synthe");
-SetTargetFPS(60);
+  InitWindow(screenWidth, screenHeight, "Electro-synthé");
+  SetTargetFPS(60);
 
   // Init state
   AppState myState = {
     .showMessage = false,
     .darkMode = false,
     .sliderValue = 50.0f
-};
+  };
 
   InitGuiStyle();
 

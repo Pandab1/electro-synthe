@@ -1,5 +1,5 @@
 libbase_project = static_library('baseproject',
-  sources: ['gui.c', 'custom_math.c'],
+  sources: ['gui.c', 'gui_components.c', 'gui_oscillator.c', 'custom_math.c'],
   include_directories: inc,
   install: true,
   dependencies: [mathlib_dep, raylib_dep]
