@@ -68,11 +68,11 @@ void generate_sound(FILE *f, u32 num_sample, u32 num_notes,
 }
 
 int main(void) {
-  const int screenWidth = 800;
-  const int screenHeight = 450;
+  const int screenWidth = 1000;
+  const int screenHeight = 800;
 
-InitWindow(screenWidth, screenHeight, "Electro-Synthe");
-SetTargetFPS(60);
+  InitWindow(screenWidth, screenHeight, "Electro-synthé");
+  SetTargetFPS(60);
 
   // Init state
   AppState myState = {
