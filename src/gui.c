@@ -118,6 +118,7 @@ static void DessinerMenuLateral(AppState *etat)
         IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
     {
         etat->audioActif = !etat->audioActif;
+    }
 
         // Si on coupe le moteur audio => on stoppe la lecture aussi
         if (!etat->audioActif) {
