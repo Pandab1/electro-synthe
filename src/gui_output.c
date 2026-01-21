@@ -1,8 +1,8 @@
 #include "raylib.h"
-#include "../include/raygui.h"
 #include "../include/gui_interface.h"
 #include "../include/gui_output.h"
 
+#include <math.h>
 #include <stdio.h>
 
 static const char *NomForme(FormeOnde f)
