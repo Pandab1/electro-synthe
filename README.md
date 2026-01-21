@@ -106,6 +106,6 @@ py -m pip install --user meson ninja
 
 ```
 meson setup build
-meson compile -C build
+meson compile -C build --ninja-args=clang-format
 meson test -C build
 ```
