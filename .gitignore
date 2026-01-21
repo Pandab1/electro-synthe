@@ -1,4 +1,5 @@
 *.wav
+.cache/
 
 # Prerequisites
 *.d
