@@ -1,25 +1,10 @@
 #include "custom_math.h"
 #include "utils_files.h"
 #include "utils_maths.h"
-#include <stdint.h>
 #include "raylib.h"
 #include "../include/gui_interface.h"
 
-typedef int16_t i16;
-typedef uint16_t u16;
-typedef uint32_t u32;
 
-typedef float f32;
-
-void write_le_16(FILE* f, u16 n){
-  fwrite(&n, sizeof(u16), 1, f);
-}
-
-void write_le_32(FILE* f, u32 n){
-  fwrite(&n, sizeof(u32), 1, f);
-}
-
-#define WRITE_STR_LIT(f, s) fwrite ((s), 1, sizeof(s) - 1, f)
 #include <stdio.h>
 
 #define FREQ 44100
