@@ -9,6 +9,6 @@ void DessinerSliderAvecBoutons(Rectangle zoneGroupe,
                                float min, float max,
                                float pas,
                                const char *formatTexte);
-bool DessinerBoutonOnde(Rectangle zone, const char *icone,
+bool DessinerBoutonOnde(Rectangle zone, int iconId,
                         const char *libelle, bool selectionne);
 #endif
