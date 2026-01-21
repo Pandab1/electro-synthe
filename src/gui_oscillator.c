@@ -62,21 +62,22 @@ void DessinerPageOscillateur(AppState *etat, int zoneX)
     // -----------------------------
     // Bloc FORMES
     // -----------------------------
-    DrawText("FORME D'ONDE", x, (int)(35*dpi), (int)(14*dpi), DARKGRAY);
-
-    Rectangle zoneForme = { (float)x, (50*dpi), (float)w, (45*dpi) };
+    Rectangle zoneForme = { (float)x, (35*dpi), (float)w, (60*dpi) };
     DrawRectangleRec(zoneForme, (Color){220,220,220,255});
     DrawRectangleLinesEx(zoneForme, 2, (Color){170,170,170,255});
+
+    DrawText("FORME D'ONDE", (int)(zoneForme.x + 10*dpi), (int)(zoneForme.y + 6*dpi), (int)(14*dpi), DARKGRAY);
 
     float marge = 10.0f * dpi;
     float espace = 12.0f * dpi;
     float hBtn = 30.0f * dpi;
     float lBtn = (zoneForme.width - 2*marge - 3*espace) / 4.0f;
+    float yBtn = zoneForme.y + 24*dpi;
 
-    Rectangle b1 = { zoneForme.x + marge + (lBtn + espace)*0, zoneForme.y + 7.5f*dpi, lBtn, hBtn };
-    Rectangle b2 = { zoneForme.x + marge + (lBtn + espace)*1, zoneForme.y + 7.5f*dpi, lBtn, hBtn };
-    Rectangle b3 = { zoneForme.x + marge + (lBtn + espace)*2, zoneForme.y + 7.5f*dpi, lBtn, hBtn };
-    Rectangle b4 = { zoneForme.x + marge + (lBtn + espace)*3, zoneForme.y + 7.5f*dpi, lBtn, hBtn };
+    Rectangle b1 = { zoneForme.x + marge + (lBtn + espace)*0, yBtn, lBtn, hBtn };
+    Rectangle b2 = { zoneForme.x + marge + (lBtn + espace)*1, yBtn, lBtn, hBtn };
+    Rectangle b3 = { zoneForme.x + marge + (lBtn + espace)*2, yBtn, lBtn, hBtn };
+    Rectangle b4 = { zoneForme.x + marge + (lBtn + espace)*3, yBtn, lBtn, hBtn };
 
     if (DessinerBoutonOnde(b1, ICON_WAVE_SINUS,       "Sinus",    etat->formeOnde == ONDE_SINUS))         etat->formeOnde = ONDE_SINUS;
     if (DessinerBoutonOnde(b2, ICON_WAVE_SQUARE,      "Carrée",   etat->formeOnde == ONDE_CARREE))        etat->formeOnde = ONDE_CARREE;
