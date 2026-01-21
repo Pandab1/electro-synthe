@@ -56,6 +56,8 @@ typedef struct AppState {
     Vector2 scrollOutput;
     float heightOutput;
 
+    EnveloppeADSR adsr;
+
     bool showMessage;
     float sliderValue;
 } AppState;
