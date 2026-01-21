@@ -1,91 +1,109 @@
 #include "raylib.h"
-#include "../include/raygui.h"   // Include raygui header without implementation
+#include <stdio.h>
+
+#include "../include/raygui.h"
+#include "../include/gui_interface.h"
 #include "../include/gui_components.h"
 
-void DessinerSliderAvecBoutons(Rectangle zoneGroupe,
-                                      const char *titre,
-                                      float *valeur,
-                                      float min, float max,
-                                      float pas,
-                                      const char *formatTexte)
+// Helper: clamp
+static float ClampF(float v, float mn, float mx)
 {
-    float h = zoneGroupe.height;
-    // Base reference height is 110.0f. If zone is smaller/bigger, we scale elements.
-    float scale = h / 110.0f;
-    if (scale < 0.5f) scale = 0.5f; // prevent too small
-
-    int gap = (int)(10 * scale);
-    int fontSizeTitle = (int)(16 * scale);
-    int fontSizeVal   = (int)(16 * scale);
-
-    DrawText(titre, (int)zoneGroupe.x + gap, (int)zoneGroupe.y + gap * 0.5f, fontSizeTitle, DARKGRAY);
-
-    float btnSize = 32.0f * scale;
-    float yControls = zoneGroupe.y + (h * 0.35f);
-
-    // Bouton -
-    Rectangle btnMoins = { zoneGroupe.x + gap, yControls, btnSize, btnSize };
-    if (GuiButton(btnMoins, "-")) {
-        *valeur -= pas;
-        if (*valeur < min) *valeur = min;
-    }
-
-    // Bouton +
-    Rectangle btnPlus = { zoneGroupe.x + zoneGroupe.width - gap - btnSize, yControls, btnSize, btnSize };
-    if (GuiButton(btnPlus, "+")) {
-        *valeur += pas;
-        if (*valeur > max) *valeur = max;
-    }
-
-    float sliderH = 16.0f * scale;
-    float sliderY = yControls + (btnSize - sliderH)/2.0f;
-
-    Rectangle slider = {
-        zoneGroupe.x + gap + btnSize + gap,
-        sliderY,
-        zoneGroupe.width - 2*(gap + btnSize + gap),
-        sliderH
-    };
-    GuiSlider(slider, "", "", valeur, min, max);
-
-    float yText = zoneGroupe.y + (h * 0.75f);
-
-    const char *txt = TextFormat(formatTexte, *valeur);
-    int w = MeasureText(txt, fontSizeVal);
-    DrawText(txt, (int)(zoneGroupe.x + zoneGroupe.width/2 - w/2), (int)yText, fontSizeVal, DARKGRAY);
-
-    DrawText(TextFormat(formatTexte, min), (int)(slider.x), (int)yText, (int)(fontSizeVal*0.9f), GRAY);
-
-    const char *txtMax = TextFormat(formatTexte, max);
-    int wMax = MeasureText(txtMax, (int)(fontSizeVal*0.9f));
-    DrawText(txtMax, (int)(slider.x + slider.width - wMax), (int)yText, (int)(fontSizeVal*0.9f), GRAY);
+    if (v < mn) return mn;
+    if (v > mx) return mx;
+    return v;
 }
 
 bool DessinerBoutonOnde(Rectangle zone, const char *icone,
-                               const char *libelle, bool selectionne)
+                        const char *libelle, bool selectionne)
 {
-    Color couleurFond    = selectionne ? (Color){130, 180, 220, 255} : (Color){200, 200, 200, 255};
-    Color couleurBordure = selectionne ? (Color){90, 140, 180, 255}  : (Color){160, 160, 160, 255};
-
-    DrawRectangleRec(zone, couleurFond);
-    DrawRectangleLinesEx(zone, 2, couleurBordure);
-
-    float h = zone.height;
-    float scale = h / 80.0f;
-    if (scale < 0.3f) scale = 0.3f;
-
-    int tailleIcone = (int)(20 * scale);
-    int tailleTexte = (int)(16 * scale);
-
-    int largeurIcone = MeasureText(icone, tailleIcone);
-    int largeurTexte = MeasureText(libelle, tailleTexte);
-
-    int centreX = (int)(zone.x + zone.width / 2);
-
     bool clicked = GuiButton(zone, "");
 
-    DrawText(icone,   centreX - largeurIcone / 2, (int)(zone.y + h * 0.20f), tailleIcone, DARKGRAY);
-    DrawText(libelle, centreX - largeurTexte / 2, (int)(zone.y + h * 0.55f), tailleTexte, DARKGRAY);
+    if (selectionne) {
+        DrawRectangleRec(zone, (Color){130, 180, 220, 255});
+        DrawRectangleLinesEx(zone, 2, (Color){90, 140, 180, 255});
+    } else {
+        DrawRectangleRec(zone, (Color){200, 200, 200, 255});
+        DrawRectangleLinesEx(zone, 2, (Color){160, 160, 160, 255});
+    }
+
+    int fontSize = (int)(GuiGetStyle(DEFAULT, TEXT_SIZE) * 0.85f);
+
+    // icône
+    DrawText(icone,
+             (int)(zone.x + 8),
+             (int)(zone.y + zone.height/2 - fontSize/2),
+             fontSize,
+             DARKGRAY);
+
+    // label
+    DrawText(libelle,
+             (int)(zone.x + 30),
+             (int)(zone.y + zone.height/2 - fontSize/2),
+             fontSize,
+             DARKGRAY);
 
     return clicked;
 }
+
+
+void DessinerSliderAvecBoutons(Rectangle zoneGroupe,
+                               const char *titre,
+                               float *valeur,
+                               float min, float max,
+                               float pas,
+                               const char *formatTexte)
+{
+    float dpi = GetAppDPI();
+
+    int titleSize = (int)(14*dpi);
+    int titleX = (int)(zoneGroupe.x + 10*dpi);
+    int titleY = (int)(zoneGroupe.y + 6*dpi);
+
+    DrawText(titre, titleX, titleY, titleSize, DARKGRAY);
+
+    char buff[64];
+    snprintf(buff, sizeof(buff), formatTexte, *valeur);
+
+    int valueSize = (int)(14*dpi);
+    int valueW = MeasureText(buff, valueSize);
+    int valueX = (int)(zoneGroupe.x + zoneGroupe.width - 10*dpi - valueW);
+    int valueY = titleY;
+
+    DrawText(buff, valueX, valueY, valueSize, DARKGRAY);
+
+    float yControls = zoneGroupe.y + 24*dpi;
+
+    Rectangle btnMoins = {
+        zoneGroupe.x + 10*dpi,
+        yControls,
+        35*dpi,
+        22*dpi
+    };
+
+    Rectangle btnPlus = {
+        zoneGroupe.x + zoneGroupe.width - 10*dpi - 35*dpi,
+        yControls,
+        35*dpi,
+        22*dpi
+    };
+
+    if (GuiButton(btnMoins, "-")) *valeur -= pas;
+    if (GuiButton(btnPlus,  "+")) *valeur += pas;
+
+    *valeur = ClampF(*valeur, min, max);
+
+    float sliderX = btnMoins.x + btnMoins.width + 10*dpi;
+    float sliderW = (btnPlus.x - 10*dpi) - sliderX;
+
+    Rectangle sliderRect = {
+        sliderX,
+        yControls + 4*dpi,
+        sliderW,
+        16*dpi
+    };
+
+    GuiSlider(sliderRect, "", "", valeur, min, max);
+
+    *valeur = ClampF(*valeur, min, max);
+}
+
