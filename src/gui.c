@@ -22,15 +22,16 @@ float TextToFloat(const char *text)
 
 float GetAppDPI(void)
 {
-    #ifdef __linux__
+    // soucis dpi avec linux hidpi à voir + tard...
+    /*#ifdef __linux__
     // Sur Linux, utiliser l'échelle DPI retournée par Raylib si disponible
     Vector2 scale = GetWindowScaleDPI();
     if (scale.x > 0.0f) return scale.x + (scale.x/2);
     return 1.5f;
-    #else
+    #else*/
     // Valeur par défaut pour autres OS
     return 1.5f;
-    #endif
+    //#endif
 }
 
 /* ------------- Menu latéral -------------- */
