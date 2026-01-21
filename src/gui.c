@@ -10,12 +10,11 @@
 #include "../include/gui_interface.h"
 #include "../include/gui_components.h"
 
-float TextToFloat(const char *text);
 
-#define RAYGUI_IMPLEMENTATION
 #include "../include/raygui.h"
 
-// Polyfills for Raylib 5.0 compatibility
+/* ----------------- Utils ----------------- */
+
 float TextToFloat(const char *text)
 {
     return strtof(text, NULL);
@@ -118,7 +117,6 @@ static void DessinerMenuLateral(AppState *etat)
         IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
     {
         etat->audioActif = !etat->audioActif;
-    }
 
         // Si on coupe le moteur audio => on stoppe la lecture aussi
         if (!etat->audioActif) {
