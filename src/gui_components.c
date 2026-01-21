@@ -13,7 +13,7 @@ static float ClampF(float v, float mn, float mx)
     return v;
 }
 
-bool DessinerBoutonOnde(Rectangle zone, const char *icone,
+bool DessinerBoutonOnde(Rectangle zone, int iconId,
                         const char *libelle, bool selectionne)
 {
     bool clicked = GuiButton(zone, "");
@@ -27,12 +27,14 @@ bool DessinerBoutonOnde(Rectangle zone, const char *icone,
     }
 
     int fontSize = (int)(GuiGetStyle(DEFAULT, TEXT_SIZE) * 0.85f);
+    int iconSize = fontSize; // Approximate icon size to match font
+    int pixelSize = (iconSize / 16) < 1 ? 1 : (iconSize / 16); // Calculate pixel size for GuiDrawIcon
 
     // icône
-    DrawText(icone,
+    GuiDrawIcon(iconId,
              (int)(zone.x + 8),
-             (int)(zone.y + zone.height/2 - fontSize/2),
-             fontSize,
+             (int)(zone.y + zone.height/2 - (pixelSize*16)/2),
+             pixelSize,
              DARKGRAY);
 
     // label
@@ -46,64 +48,63 @@ bool DessinerBoutonOnde(Rectangle zone, const char *icone,
 }
 
 
-void DessinerSliderAvecBoutons(Rectangle zoneGroupe,
-                               const char *titre,
-                               float *valeur,
-                               float min, float max,
-                               float pas,
-                               const char *formatTexte)
-{
-    float dpi = GetAppDPI();
+    void DessinerSliderAvecBoutons(Rectangle zoneGroupe,
+                                   const char *titre,
+                                   float *valeur,
+                                   float min, float max,
+                                   float pas,
+                                   const char *formatTexte){
+        float dpi = GetAppDPI();
 
-    int titleSize = (int)(14*dpi);
-    int titleX = (int)(zoneGroupe.x + 10*dpi);
-    int titleY = (int)(zoneGroupe.y + 6*dpi);
+        int titleSize = (int)(14*dpi);
+        int titleX = (int)(zoneGroupe.x + 10*dpi);
+        int titleY = (int)(zoneGroupe.y + 6*dpi);
 
-    DrawText(titre, titleX, titleY, titleSize, DARKGRAY);
+        DrawText(titre, titleX, titleY, titleSize, DARKGRAY);
 
-    char buff[64];
-    snprintf(buff, sizeof(buff), formatTexte, *valeur);
+        char buff[64];
+        snprintf(buff, sizeof(buff), formatTexte, *valeur);
 
-    int valueSize = (int)(14*dpi);
-    int valueW = MeasureText(buff, valueSize);
-    int valueX = (int)(zoneGroupe.x + zoneGroupe.width - 10*dpi - valueW);
-    int valueY = titleY;
+        int valueSize = (int)(14*dpi);
+        int valueW = MeasureText(buff, valueSize);
+        int valueX = (int)(zoneGroupe.x + zoneGroupe.width - 10*dpi - valueW);
+        int valueY = titleY;
 
-    DrawText(buff, valueX, valueY, valueSize, DARKGRAY);
+        DrawText(buff, valueX, valueY, valueSize, DARKGRAY);
 
-    float yControls = zoneGroupe.y + 24*dpi;
+        float yControls = zoneGroupe.y + 24*dpi;
 
-    Rectangle btnMoins = {
-        zoneGroupe.x + 10*dpi,
-        yControls,
-        35*dpi,
-        22*dpi
-    };
+        Rectangle btnMoins = {
+            zoneGroupe.x + 10*dpi,
+            yControls,
+            35*dpi,
+            22*dpi
+        };
 
-    Rectangle btnPlus = {
-        zoneGroupe.x + zoneGroupe.width - 10*dpi - 35*dpi,
-        yControls,
-        35*dpi,
-        22*dpi
-    };
+        Rectangle btnPlus = {
+            zoneGroupe.x + zoneGroupe.width - 10*dpi - 35*dpi,
+            yControls,
+            35*dpi,
+            22*dpi
+        };
 
-    if (GuiButton(btnMoins, "-")) *valeur -= pas;
-    if (GuiButton(btnPlus,  "+")) *valeur += pas;
+        if (GuiButton(btnMoins, "-")) *valeur -= pas;
+        if (GuiButton(btnPlus,  "+")) *valeur += pas;
 
-    *valeur = ClampF(*valeur, min, max);
+        *valeur = ClampF(*valeur, min, max);
 
-    float sliderX = btnMoins.x + btnMoins.width + 10*dpi;
-    float sliderW = (btnPlus.x - 10*dpi) - sliderX;
+        float sliderX = btnMoins.x + btnMoins.width + 10*dpi;
+        float sliderW = (btnPlus.x - 10*dpi) - sliderX;
 
-    Rectangle sliderRect = {
-        sliderX,
-        yControls + 4*dpi,
-        sliderW,
-        16*dpi
-    };
+        Rectangle sliderRect = {
+            sliderX,
+            yControls + 4*dpi,
+            sliderW,
+            16*dpi
+        };
 
-    GuiSlider(sliderRect, "", "", valeur, min, max);
+        GuiSlider(sliderRect, "", "", valeur, min, max);
 
-    *valeur = ClampF(*valeur, min, max);
-}
+        *valeur = ClampF(*valeur, min, max);
+    }
 

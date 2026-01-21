@@ -22,7 +22,15 @@ float TextToFloat(const char *text)
 
 float GetAppDPI(void)
 {
+    #ifdef __linux__
+    // Sur Linux, utiliser l'échelle DPI retournée par Raylib si disponible
+    Vector2 scale = GetWindowScaleDPI();
+    if (scale.x > 0.0f) return scale.x + (scale.x/2);
     return 1.5f;
+    #else
+    // Valeur par défaut pour autres OS
+    return 1.5f;
+    #endif
 }
 
 /* ------------- Menu latéral -------------- */
@@ -38,7 +46,7 @@ static void DessinerBoutonMenu(AppState *etat, const char *libelle, PageApp page
     DrawRectangle(x, y, largeur, hauteur, fond);
     DrawRectangleLines(x, y, largeur, hauteur, bord);
 
-    if (GuiButton((Rectangle){x,y,largeur,hauteur}, libelle)) {
+    if (GuiButton((Rectangle){(float)x, (float)y, (float)largeur, (float)hauteur}, libelle)) {
         etat->pageCourante = page;
     }
 }
@@ -61,11 +69,10 @@ static void DessinerMenuLateral(AppState *etat)
     int h = (int)(32*dpi);
     int s = (int)(8*dpi);
 
-    // Boutons pages (bloc haut)
-    DessinerBoutonMenu(etat,"Oscillator",PAGE_OSCILLATOR,x,y,w,h); y += h + s;
-    DessinerBoutonMenu(etat,"Enveloppe", PAGE_ENVELOPPE,x,y,w,h);  y += h + s;
-    DessinerBoutonMenu(etat,"Output",    PAGE_OUTPUT,x,y,w,h);     y += h + s;
-    DessinerBoutonMenu(etat,"Help",      PAGE_HELP,x,y,w,h);       y += h + s;
+    DessinerBoutonMenu(etat, "#125#Oscillator" /*ICON_WAVE_SINUS*/, PAGE_OSCILLATOR, x, y, w, h); y += h + s;
+    DessinerBoutonMenu(etat, "#124#Enveloppe" /*ICON_WAVE*/,  PAGE_ENVELOPPE,  x, y, w, h); y += h + s;
+    DessinerBoutonMenu(etat, "#122#Output" /*ICON_AUDIO*/,     PAGE_OUTPUT,     x, y, w, h); y += h + s;
+    DessinerBoutonMenu(etat, "#193#Help" /*ICON_HELP*/,       PAGE_HELP,       x, y, w, h); y += h + s;
 
     // ==========================
     // Bloc moteur audio (en bas)
@@ -123,7 +130,8 @@ GuiSetStyle(DEFAULT, TEXT_SIZE, prevTextSize);
 
 void InitGuiStyle(void)
 {
-    GuiSetStyle(DEFAULT, TEXT_SIZE, (int)(16 * GetAppDPI()));
+    float dpi = GetAppDPI();
+    GuiSetStyle(DEFAULT, TEXT_SIZE, (int)(16 * dpi));
 }
 
 
@@ -145,8 +153,6 @@ void DrawAppInterface(AppState *etat)
                   GetScreenWidth()-zoneX,
                   GetScreenHeight(),
                   (Color){245,245,245,255});
-
-    /* -------- ROUTEUR DE PAGES -------- */
 
     switch (etat->pageCourante) {
         case PAGE_OSCILLATOR:

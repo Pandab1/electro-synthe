@@ -64,7 +64,7 @@ void DessinerPageOscillateur(AppState *etat, int zoneX)
     // -----------------------------
     DrawText("FORME D'ONDE", x, (int)(35*dpi), (int)(14*dpi), DARKGRAY);
 
-    Rectangle zoneForme = { (float)x, (float)(50*dpi), (float)w, (float)(45*dpi) };
+    Rectangle zoneForme = { (float)x, (50*dpi), (float)w, (45*dpi) };
     DrawRectangleRec(zoneForme, (Color){220,220,220,255});
     DrawRectangleLinesEx(zoneForme, 2, (Color){170,170,170,255});
 
@@ -78,17 +78,15 @@ void DessinerPageOscillateur(AppState *etat, int zoneX)
     Rectangle b3 = { zoneForme.x + marge + (lBtn + espace)*2, zoneForme.y + 7.5f*dpi, lBtn, hBtn };
     Rectangle b4 = { zoneForme.x + marge + (lBtn + espace)*3, zoneForme.y + 7.5f*dpi, lBtn, hBtn };
 
-    if (DessinerBoutonOnde(b1, "~", "Sinusoïdale",  etat->formeOnde == ONDE_SINUS))        etat->formeOnde = ONDE_SINUS;
-    if (DessinerBoutonOnde(b2, "∏", "Carrée",       etat->formeOnde == ONDE_CARREE))       etat->formeOnde = ONDE_CARREE;
-    if (DessinerBoutonOnde(b3, "△", "Triangulaire", etat->formeOnde == ONDE_TRIANGULAIRE)) etat->formeOnde = ONDE_TRIANGULAIRE;
-    if (DessinerBoutonOnde(b4, "/", "Dent de scie", etat->formeOnde == ONDE_DENT_DE_SCIE)) etat->formeOnde = ONDE_DENT_DE_SCIE;
+    if (DessinerBoutonOnde(b1, ICON_WAVE_SINUS,       "Sinus",    etat->formeOnde == ONDE_SINUS))         etat->formeOnde = ONDE_SINUS;
+    if (DessinerBoutonOnde(b2, ICON_WAVE_SQUARE,      "Carrée",   etat->formeOnde == ONDE_CARREE))        etat->formeOnde = ONDE_CARREE;
+    if (DessinerBoutonOnde(b3, ICON_WAVE_TRIANGULAR,  "Triangle", etat->formeOnde == ONDE_TRIANGULAIRE))  etat->formeOnde = ONDE_TRIANGULAIRE;
+    if (DessinerBoutonOnde(b4, ICON_WAVE,             "Scie",     etat->formeOnde == ONDE_DENT_DE_SCIE))  etat->formeOnde = ONDE_DENT_DE_SCIE;
 
     float y = zoneForme.y + zoneForme.height + 10*dpi;
 
-    // -----------------------------
-    // Bloc FREQUENCE
-    // -----------------------------
-    Rectangle groupeFreq = { (float)x, y, (float)w, (float)(50*dpi) };
+
+    Rectangle groupeFreq = { (float)x, y, (float)w, (50*dpi) };
     DrawRectangleRec(groupeFreq, (Color){220,220,220,255});
     DrawRectangleLinesEx(groupeFreq, 2, (Color){170,170,170,255});
 
@@ -111,40 +109,38 @@ void DessinerPageOscillateur(AppState *etat, int zoneX)
 
     y += groupeVol.height + 10*dpi;
 
-    // -----------------------------
-    // Bouton PLAY/STOP
-    // -----------------------------
-    Rectangle btnPlay = { (float)x, y, (float)w, (float)(35*dpi) };
 
     Color fond = etat->lecture ? (Color){210, 80, 80, 255} : (Color){90, 180, 110, 255};
+    Rectangle btnPlay = { (float)x, y, (float)w, (35*dpi) };
     DrawRectangleRec(btnPlay, fond);
     DrawRectangleLinesEx(btnPlay, 2, (Color){60,60,60,255});
 
-    const char *txt = etat->lecture ? "■ STOP" : "▶ PLAY";
-    int tw = MeasureText(txt, (int)(18*dpi));
-    DrawText(txt,
-             (int)(btnPlay.x + btnPlay.width/2 - tw/2),
-             (int)(btnPlay.y + 8*dpi),
-             (int)(18*dpi),
-             RAYWHITE);
+    bool isPressed = etat->lecture;
 
-    if (CheckCollisionPointRec(GetMousePosition(), btnPlay) &&
-        IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
-    {
+    const char *txt = etat->lecture ? GuiIconText(ICON_PLAYER_STOP, "STOP") : GuiIconText(ICON_PLAYER_PLAY, "PLAY");
+
+    int prevBaseColor = GuiGetStyle(BUTTON, BASE_COLOR_NORMAL);
+    int prevTextColor = GuiGetStyle(BUTTON, TEXT_COLOR_NORMAL);
+
+    if (etat->lecture) {
+        GuiSetStyle(BUTTON, BASE_COLOR_NORMAL, 0xD25050FF); // Rouge
+        GuiSetStyle(BUTTON, TEXT_COLOR_NORMAL, 0xFFFFFFFF); // Blanc
+    } else {
+        GuiSetStyle(BUTTON, BASE_COLOR_NORMAL, 0x5AB46EFF); // Vert
+        GuiSetStyle(BUTTON, TEXT_COLOR_NORMAL, 0xFFFFFFFF); // Blanc
+    }
+    if (GuiButton(btnPlay, txt)) {
         etat->lecture = !etat->lecture;
 
         if (etat->lecture) etat->audioActif = true;
         else              etat->audioActif = false;
     }
-
+    // Restaurer style
+    GuiSetStyle(BUTTON, BASE_COLOR_NORMAL, prevBaseColor);
+    GuiSetStyle(BUTTON, TEXT_COLOR_NORMAL, prevTextColor);
     y += btnPlay.height + 15*dpi;
-
-    // -----------------------------
-    // VISUALISATION (animée)
-    // -----------------------------
     DrawText("VISUALISATION", x, (int)(y + 5*dpi), (int)(14*dpi), DARKGRAY);
-
-    Rectangle zoneVisu = { (float)x, y + 25*dpi, (float)w, (float)(140*dpi) };
+    Rectangle zoneVisu = { (float)x, y + 25*dpi, (float)w, (140*dpi) };
     DrawRectangleRec(zoneVisu, (Color){30,30,30,255});
     DrawRectangleLinesEx(zoneVisu, 2, (Color){170,170,170,255});
 
