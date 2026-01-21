@@ -97,11 +97,21 @@ void DessinerPageOutput(AppState *etat, int zoneX)
 
     y += (int)(28*dpi);
 
+    DrawText("Forme d'onde", rForme.x + 12*dpi, rForme.y + 10*dpi, 14*dpi, GRAY);
+    DrawText(NomForme(etat->formeOnde),
+             rForme.x + 12*dpi, rForme.y + 34*dpi, 18*dpi, BLACK);
     DrawBar(x, y, w, (int)(18*dpi), dpi, etat->audioActif ? etat->volume : 0.0f,
             etat->audioActif ? (Color){80,180,120,255} : (Color){200,70,70,255});
 
+    char buf[32];
+    DrawText("Fréquence", rFreq.x + 12*dpi, rFreq.y + 10*dpi, 14*dpi, GRAY);
+    snprintf(buf, sizeof(buf), "%.0f Hz", etat->frequenceHz);
+    DrawText(buf, rFreq.x + 12*dpi, rFreq.y + 34*dpi, 18*dpi, BLACK);
     y += (int)(30*dpi);
 
+    DrawText("Volume", rVol.x + 12*dpi, rVol.y + 10*dpi, 14*dpi, GRAY);
+    snprintf(buf, sizeof(buf), "%.0f %%", etat->volume * 100.0f);
+    DrawText(buf, rVol.x + 12*dpi, rVol.y + 34*dpi, 18*dpi, BLACK);
     DrawText("Format cible : Mono - 44100 Hz - Float32", x, y, (int)(14*dpi), GRAY);
     y += (int)(18*dpi);
 
