@@ -2,6 +2,7 @@
 #define GUI_INTERFACE_H
 
 #include <stdbool.h>
+float TextToFloat(const char *text);
 
 typedef enum PageApp {
     PAGE_OSCILLATOR = 0,
@@ -23,6 +24,7 @@ typedef struct AppState {
     bool darkMode;
     PageApp pageCourante;
     bool audioActif;
+    float phaseVisu;   // l’animation de la visualisation
 
     FormeOnde formeOnde;
 

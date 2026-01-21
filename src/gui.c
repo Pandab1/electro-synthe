@@ -1,17 +1,20 @@
 #include "raylib.h"
 #include <stdlib.h>
-#include <math.h>
+
+
+#include "../include/gui_oscillator.h"
+#include "../include/gui_envelop.h"
+#include "../include/gui_output.h"
+#include "../include/gui_help.h"
 
 #include "../include/gui_interface.h"
 #include "../include/gui_components.h"
-#include "../include/gui_oscillator.h"
 
-float TextToFloat(const char *text);
 
-#define RAYGUI_IMPLEMENTATION
 #include "../include/raygui.h"
 
-// Polyfills for Raylib 5.0 compatibility
+/* ----------------- Utils ----------------- */
+
 float TextToFloat(const char *text)
 {
     return strtof(text, NULL);
@@ -19,116 +22,146 @@ float TextToFloat(const char *text)
 
 float GetAppDPI(void)
 {
-    // gestion centralisée du dpi, à voir pour une logique + poussée
-    //Vector2 dpi = GetWindowScaleDPI();
     return 1.5f;
 }
 
-
-static void DessinerBoutonMenu(AppState *etat, const char *libelle, PageApp page,
-                              int x, int y, int largeur, int hauteur);
-
-static void DessinerMenuLateral(AppState *etat);
-
-
+/* ------------- Menu latéral -------------- */
 
 static void DessinerBoutonMenu(AppState *etat, const char *libelle, PageApp page,
                               int x, int y, int largeur, int hauteur)
 {
-    bool selectionne = (etat->pageCourante == page);
+    bool actif = (etat->pageCourante == page);
 
-    if (selectionne) {
-        DrawRectangle(x, y, largeur, hauteur, (Color){130, 180, 220, 255});
-        DrawRectangleLines(x, y, largeur, hauteur, (Color){90, 140, 180, 255});
-    } else {
-        DrawRectangle(x, y, largeur, hauteur, (Color){200, 200, 200, 255});
-        DrawRectangleLines(x, y, largeur, hauteur, (Color){160, 160, 160, 255});
-    }
+    Color fond = actif ? (Color){130,180,220,255} : (Color){200,200,200,255};
+    Color bord = actif ? (Color){90,140,180,255}  : (Color){160,160,160,255};
 
-    // Zone cliquable
-    if (GuiButton((Rectangle){(float)x, (float)y, (float)largeur, (float)hauteur}, libelle)) {
+    DrawRectangle(x, y, largeur, hauteur, fond);
+    DrawRectangleLines(x, y, largeur, hauteur, bord);
+
+    if (GuiButton((Rectangle){x,y,largeur,hauteur}, libelle)) {
         etat->pageCourante = page;
     }
 }
 
-
 static void DessinerMenuLateral(AppState *etat)
 {
-    float dpi = 1.5;
-    const int largeurMenu = (int)(180 * dpi);
-
+    float dpi = GetAppDPI();
     int prevTextSize = GuiGetStyle(DEFAULT, TEXT_SIZE);
+    int largeurMenu = (int)(180 * dpi);
+
     GuiSetStyle(DEFAULT, TEXT_SIZE, (int)(14 * dpi));
 
-    DrawRectangle(0, 0, largeurMenu, GetScreenHeight(), (Color){220, 220, 220, 255});
-    DrawText("MENU", (int)(15*dpi), (int)(15*dpi), (int)(18*dpi), (Color){70, 70, 70, 255});
+    // Fond sidebar
+    DrawRectangle(0, 0, largeurMenu, GetScreenHeight(), (Color){220,220,220,255});
+    DrawText("MENU", (int)(15*dpi), (int)(15*dpi), (int)(18*dpi), DARKGRAY);
 
-    const int xBouton = (int)(10*dpi);
-    const int largeurBouton = largeurMenu - (int)(20*dpi);
-    const int hauteurBouton = (int)(32*dpi);
-    const int espace = (int)(8*dpi);
-
+    int x = (int)(10*dpi);
     int y = (int)(45*dpi);
+    int w = largeurMenu - (int)(20*dpi);
+    int h = (int)(32*dpi);
+    int s = (int)(8*dpi);
 
-    DessinerBoutonMenu(etat, "Oscillator", PAGE_OSCILLATOR, xBouton, y, largeurBouton, hauteurBouton); y += hauteurBouton + espace;
-    DessinerBoutonMenu(etat, "Enveloppe",  PAGE_ENVELOPPE,  xBouton, y, largeurBouton, hauteurBouton); y += hauteurBouton + espace;
-    DessinerBoutonMenu(etat, "Output",     PAGE_OUTPUT,     xBouton, y, largeurBouton, hauteurBouton); y += hauteurBouton + espace;
-    DessinerBoutonMenu(etat, "Help",       PAGE_HELP,       xBouton, y, largeurBouton, hauteurBouton); y += hauteurBouton + espace;
+    // Boutons pages (bloc haut)
+    DessinerBoutonMenu(etat,"Oscillator",PAGE_OSCILLATOR,x,y,w,h); y += h + s;
+    DessinerBoutonMenu(etat,"Enveloppe", PAGE_ENVELOPPE,x,y,w,h);  y += h + s;
+    DessinerBoutonMenu(etat,"Output",    PAGE_OUTPUT,x,y,w,h);     y += h + s;
+    DessinerBoutonMenu(etat,"Help",      PAGE_HELP,x,y,w,h);       y += h + s;
 
-    // Bloc moteur audio
+    // ==========================
+    // Bloc moteur audio (en bas)
+    // ==========================
+    y += (int)(20*dpi);
+
+    // séparation
+    DrawLine(x, y, x + w, y, (Color){160,160,160,255});
     y += (int)(10*dpi);
-    int hBlocAudio = (int)(110*dpi);
-    DrawRectangle(xBouton, y, largeurBouton, hBlocAudio, (Color){210, 210, 210, 255});
-    DrawRectangleLines(xBouton, y, largeurBouton, hBlocAudio, (Color){160, 160, 160, 255});
-    DrawText("MOTEUR AUDIO", xBouton + (int)(10*dpi), y + (int)(10*dpi), (int)(14*dpi), (Color){90, 90, 90, 255});
 
-    Rectangle zoneBoutonAudio = {
-        (float)(xBouton + 10*dpi),
-        (float)(y + 35*dpi),
-        (float)(largeurBouton - 20*dpi),
-        (float)(60*dpi)
+    DrawText("MOTEUR AUDIO", x + (int)(10*dpi), y, (int)(14*dpi), GRAY);
+    y += (int)(20*dpi);
+
+    Rectangle btn = {
+        (float)(x + 10*dpi),
+        (float)y,
+        (float)(w - 20*dpi),
+        (float)(45*dpi)
     };
 
-    Color fond = etat->audioActif ? (Color){60, 170, 90, 255} : (Color){210, 80, 80, 255};
-    DrawRectangleRec(zoneBoutonAudio, fond);
-    DrawRectangleLinesEx(zoneBoutonAudio, 2, (Color){120, 50, 50, 255});
+    // Couleur selon état
+    Color c = etat->audioActif ? (Color){70,180,110,255} : (Color){200,70,70,255};
 
-    if (GuiButton(zoneBoutonAudio, etat->audioActif ? "ON" : "OFF")) {
+    // Dessin du bouton (custom)
+    DrawRectangleRec(btn, c);
+    DrawRectangleLinesEx(btn, 2, (Color){60,60,60,255});
+
+    // Texte centré
+    const char *txt = etat->audioActif ? "AUDIO : ON" : "AUDIO : OFF";
+    int fs = (int)(16*dpi);
+    int tw = MeasureText(txt, fs);
+
+    DrawText(txt,
+            (int)(btn.x + btn.width/2 - tw/2),
+            (int)(btn.y + btn.height/2 - fs/2),
+            fs,
+            RAYWHITE);
+
+    // Zone cliquable (UNE SEULE FOIS)
+    if (CheckCollisionPointRec(GetMousePosition(), btn) &&
+        IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
+    {
         etat->audioActif = !etat->audioActif;
-    }
 
-    GuiSetStyle(DEFAULT, TEXT_SIZE, prevTextSize);
+        // Si on coupe le moteur audio => on stoppe la lecture aussi
+        if (!etat->audioActif) {
+            etat->lecture = false;
+        }
+    }
+GuiSetStyle(DEFAULT, TEXT_SIZE, prevTextSize);
 }
 
 
+/* ------------- API publique -------------- */
+
 void InitGuiStyle(void)
 {
-    float dpi = 1.5;
-    GuiSetStyle(DEFAULT, TEXT_SIZE, (int)(16 * dpi));
+    GuiSetStyle(DEFAULT, TEXT_SIZE, (int)(16 * GetAppDPI()));
 }
 
 
 
 void DrawAppInterface(AppState *etat)
 {
+    if (etat->lecture && !etat->audioActif) {
+    etat->audioActif = true;
+    }
     ClearBackground(RAYWHITE);
 
-    // Sidebar
     DessinerMenuLateral(etat);
 
-    // Viewport principale
     float dpi = GetAppDPI();
     int largeurMenu = (int)(180 * dpi);
-    int zonePrincipaleX = largeurMenu;
+    int zoneX = largeurMenu;
 
-    DrawRectangle(zonePrincipaleX, 0,
-                  GetScreenWidth() - zonePrincipaleX,
+    DrawRectangle(zoneX, 0,
+                  GetScreenWidth()-zoneX,
                   GetScreenHeight(),
-                  (Color){245, 245, 245, 255});
+                  (Color){245,245,245,255});
 
-    // Render de la page sélectionnée
-    if (etat->pageCourante == PAGE_OSCILLATOR) {
-        DessinerPageOscillateur(etat, zonePrincipaleX);
+    /* -------- ROUTEUR DE PAGES -------- */
+
+    switch (etat->pageCourante) {
+        case PAGE_OSCILLATOR:
+            DessinerPageOscillateur(etat, zoneX);
+            break;
+        case PAGE_ENVELOPPE:
+            DessinerPageEnveloppe(etat, zoneX);
+            break;
+        case PAGE_OUTPUT:
+            DessinerPageOutput(etat, zoneX);
+            break;
+        case PAGE_HELP:
+            DessinerPageHelp(etat, zoneX);
+            break;
+        default:
+            break;
     }
-    // TODO: autres pages
 }
