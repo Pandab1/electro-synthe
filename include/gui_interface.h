@@ -19,6 +19,13 @@ typedef enum FormeOnde {
     ONDE_DENT_DE_SCIE
 } FormeOnde;
 
+typedef struct EnveloppeADSR {
+    float attack;   // Temps en secondes
+    float decay;    // Temps en secondes
+    float sustain;  // Niveau entre 0.0 et 1.0
+    float release;  // Temps en secondes
+} EnveloppeADSR;
+
 // Etat global de l'application (UI + paramètres)
 typedef struct AppState {
     bool darkMode;
@@ -32,6 +39,8 @@ typedef struct AppState {
     float frequenceHz;
     float volume;
     bool lecture;
+
+    EnveloppeADSR adsr;
 
     bool showMessage;
     float sliderValue;
