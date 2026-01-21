@@ -9,6 +9,8 @@
 
 #include "../include/gui_interface.h"
 #include "../include/gui_components.h"
+#include "../include/gui_oscillator.h"
+#include "../include/gui_enveloppe.h"
 
 
 #include "../include/raygui.h"
