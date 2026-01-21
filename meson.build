@@ -15,7 +15,3 @@ subdir('src')
 if get_option('build_app')
   subdir('app')
 endif
-
-if get_option('tests')
-  subdir('tests')
-endif

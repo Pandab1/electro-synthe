@@ -1,5 +1,5 @@
 libbase_project = library('baseproject',
-  sources: ['custom_math.c'],
+  sources: ['custom_math.c', 'utils_files.c'],
   include_directories: inc,
   install: true,
   dependencies: [mathlib_dep]
