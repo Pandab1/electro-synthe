@@ -3,6 +3,8 @@
 #include "../include/gui_interface.h"
 #include "../include/gui_output.h"
 
+#include <stdio.h>
+
 static const char *NomForme(FormeOnde f)
 {
     switch (f) {
@@ -55,8 +57,14 @@ void DessinerPageOutput(AppState *etat, int zoneX)
     DrawText(buf, rVol.x + 12*dpi, rVol.y + 34*dpi, 18*dpi, BLACK);
 
     DrawText("État", rEtat.x + 12*dpi, rEtat.y + 10*dpi, 14*dpi, GRAY);
-    const char *etatTxt = etat->audioActif ? "■ EN LECTURE" : "■ ARRÊTÉ";
+    const char *etatTxt = etat->audioActif ? GuiIconText(ICON_PLAYER_PLAY, "EN LECTURE") : GuiIconText(ICON_PLAYER_STOP, "ARRÊTÉ");
     Color c = etat->audioActif ? (Color){60,170,90,255} : (Color){210,80,80,255};
 
-    DrawText(etatTxt, rEtat.x + 12*dpi, rEtat.y + 34*dpi, 18*dpi, c);
+    int prevColor = GuiGetStyle(LABEL, TEXT_COLOR_NORMAL);
+    GuiSetStyle(LABEL, TEXT_COLOR_NORMAL, ColorToInt(c));
+    GuiSetStyle(LABEL, TEXT_ALIGNMENT, TEXT_ALIGN_LEFT);
+
+    GuiLabel((Rectangle){rEtat.x + 10*dpi, rEtat.y + 34*dpi, rEtat.width, 24*dpi}, etatTxt);
+
+    GuiSetStyle(LABEL, TEXT_COLOR_NORMAL, prevColor);
 }
