@@ -3,7 +3,6 @@
 
 
 #include "../include/gui_oscillator.h"
-#include "../include/gui_envelop.h"
 #include "../include/gui_output.h"
 #include "../include/gui_help.h"
 
