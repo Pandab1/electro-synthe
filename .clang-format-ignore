@@ -1,0 +1,2 @@
+# ignore miniaudio and other libraries
+lib/*
