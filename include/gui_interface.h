@@ -27,10 +27,10 @@ typedef enum ModeLecture {
 } ModeLecture;
 
 typedef struct EnveloppeADSR {
-    float attack;   // Temps en secondes
-    float decay;    // Temps en secondes
-    float sustain;  // Niveau entre 0.0 et 1.0
-    float release;  // Temps en secondes
+    float attack;   
+    float decay;    
+    float sustain;  
+    float release; 
 } EnveloppeADSR;
 
 // Etat global de l'application (UI + paramètres)
@@ -38,7 +38,7 @@ typedef struct AppState {
     bool darkMode;
     PageApp pageCourante;
     bool audioActif;
-    float phaseVisu;   // l’animation de la visualisation
+    float phaseVisu;  
 
     FormeOnde formeOnde;
 
@@ -60,7 +60,7 @@ typedef struct AppState {
     float sliderValue;
 } AppState;
 
-// Fonctions publiques GUI
+// Fonctions GUI
 void InitGuiStyle(void);
 void DrawAppInterface(AppState *etat);
 float GetAppDPI(void);

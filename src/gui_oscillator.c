@@ -103,9 +103,7 @@ void DessinerPageOscillateur(AppState *etat, int zoneX)
 
     currentY += groupeFreq.height + 10*dpi;
 
-    // -----------------------------
     // Bloc VOLUME
-    // -----------------------------
     Rectangle groupeVol = { (float)x, currentY, (float)w, (50*dpi) };
     DrawRectangleRec(groupeVol, (Color){220,220,220,255});
     DrawRectangleLinesEx(groupeVol, 2, (Color){170,170,170,255});
@@ -131,11 +129,11 @@ void DessinerPageOscillateur(AppState *etat, int zoneX)
     int prevTextColor = GuiGetStyle(BUTTON, TEXT_COLOR_NORMAL);
 
     if (etat->lecture) {
-        GuiSetStyle(BUTTON, BASE_COLOR_NORMAL, 0xD25050FF); // Rouge
-        GuiSetStyle(BUTTON, TEXT_COLOR_NORMAL, 0xFFFFFFFF); // Blanc
+        GuiSetStyle(BUTTON, BASE_COLOR_NORMAL, 0xD25050FF); 
+        GuiSetStyle(BUTTON, TEXT_COLOR_NORMAL, 0xFFFFFFFF);
     } else {
-        GuiSetStyle(BUTTON, BASE_COLOR_NORMAL, 0x5AB46EFF); // Vert
-        GuiSetStyle(BUTTON, TEXT_COLOR_NORMAL, 0xFFFFFFFF); // Blanc
+        GuiSetStyle(BUTTON, BASE_COLOR_NORMAL, 0x5AB46EFF); 
+        GuiSetStyle(BUTTON, TEXT_COLOR_NORMAL, 0xFFFFFFFF);
     }
     if (GuiButton(btnPlay, txt)) {
         etat->lecture = !etat->lecture;
@@ -165,26 +163,21 @@ void DessinerPageOscillateur(AppState *etat, int zoneX)
              (int)(zoneVisu.y + zoneVisu.height/2),
              (Color){70,70,70,255});
 
-    // Phase qui avance (défilement) uniquement si on joue ET moteur audio ON
     if (etat->lecture && etat->audioActif) {
     float dt = GetFrameTime();
-    const float scrollCyclesPerSec = 1.0f; // vitesse du défilement (constante)
+    const float scrollCyclesPerSec = 1.0f; 
     etat->phaseVisu += dt * scrollCyclesPerSec;
     etat->phaseVisu -= floorf(etat->phaseVisu);
     }
 
-    // Courbe
     int largeurCourbe = (int)zoneVisu.width - 20;
 
     // amplitude visuelle
     float amp = (zoneVisu.height * 0.35f) * etat->volume;
 
-    // nombre de cycles visibles à l’écran 
-    // "timebase" fixe : plus la fréquence monte, plus ça se resserre (zoom horizontal)
-    const float windowTime = 0.010f;           // 10 ms affichés sur la largeur
+    const float windowTime = 0.010f;         
     float cyclesVisibles = etat->frequenceHz * windowTime;
 
-    // clamp bas uniquement (évite que ce soit trop plat à basse fréquence)
     if (cyclesVisibles < 0.25f) cyclesVisibles = 0.25f;
 
     for (int i = 0; i < largeurCourbe - 1; i++) {
