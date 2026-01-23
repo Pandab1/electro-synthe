@@ -49,10 +49,15 @@ typedef struct AppState {
     ModeLecture modeLecture;
 
     EnveloppeADSR adsr;
+    //Enveloppe 
     Vector2 scrollEnveloppe;
     float heightEnveloppe;
+    //Oscillator
     Vector2 scrollOscillator;
     float heightOscillator;
+    //HELP
+    Vector2 scrollHELP;
+    float heightHELP;
     Vector2 scrollOutput;
     float heightOutput;
 
