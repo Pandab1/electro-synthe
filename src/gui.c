@@ -124,6 +124,47 @@ static void DessinerMenuLateral(AppState *etat)
             etat->lecture = false;
         }
     }
+
+    // ==========================
+    // Bouton Mode Lecture
+    // ==========================
+    y += (int)(btn.height + 15*dpi);
+
+    DrawText("MODE LECTURE", x + (int)(10*dpi), y, (int)(14*dpi), GRAY);
+    y += (int)(20*dpi);
+
+    Rectangle btnMode = {
+        (float)(x + 10*dpi),
+        (float)y,
+        (float)(w - 20*dpi),
+        (float)(45*dpi)
+    };
+
+    // Couleur selon mode
+    Color cMode = (etat->modeLecture == MODE_CONTINU)
+                  ? (Color){130,180,220,255}  // Bleu (Continu)
+                  : (Color){160,100,200,255}; // Violet (Enveloppe)
+
+    DrawRectangleRec(btnMode, cMode);
+    DrawRectangleLinesEx(btnMode, 2, (Color){60,60,60,255});
+
+    const char *txtMode = (etat->modeLecture == MODE_CONTINU) ? "CONTINU" : "ENVELOPPE";
+    int twMode = MeasureText(txtMode, fs);
+
+    DrawText(txtMode,
+            (int)(btnMode.x + btnMode.width/2 - twMode/2),
+            (int)(btnMode.y + btnMode.height/2 - fs/2),
+            fs,
+            RAYWHITE);
+
+    if (CheckCollisionPointRec(GetMousePosition(), btnMode) &&
+        IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
+    {
+        // Bascule
+        if (etat->modeLecture == MODE_CONTINU) etat->modeLecture = MODE_ENVELOPPE;
+        else etat->modeLecture = MODE_CONTINU;
+    }
+
 GuiSetStyle(DEFAULT, TEXT_SIZE, prevTextSize);
 }
 
