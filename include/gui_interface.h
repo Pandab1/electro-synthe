@@ -21,6 +21,11 @@ typedef enum FormeOnde {
     ONDE_DENT_DE_SCIE
 } FormeOnde;
 
+typedef enum ModeLecture {
+    MODE_CONTINU = 0,
+    MODE_ENVELOPPE
+} ModeLecture;
+
 typedef struct EnveloppeADSR {
     float attack;   // Temps en secondes
     float decay;    // Temps en secondes
@@ -41,6 +46,7 @@ typedef struct AppState {
     float frequenceHz;
     float volume;
     bool lecture;
+    ModeLecture modeLecture;
 
     EnveloppeADSR adsr;
     Vector2 scrollEnveloppe;
