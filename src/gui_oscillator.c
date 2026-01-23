@@ -52,17 +52,23 @@ void DessinerPageOscillateur(AppState *etat, int zoneX)
 {
     float dpi = GetAppDPI();
 
+    Vector2 origin = BeginPageContent(zoneX, &etat->heightOscillator, &etat->scrollOscillator);
+
     // Assure une taille texte correcte pour les widgets (boutons/slider)
     GuiSetStyle(DEFAULT, TEXT_SIZE, (int)(16 * dpi));
 
     int margeX = (int)(20 * dpi);
-    int x = zoneX + margeX;
-    int w = GetScreenWidth() - zoneX - 2*margeX;
+    // Position relative au scroll
+    int x = (int)(origin.x + margeX);
+    int w = (int)((GetScreenWidth() - zoneX) - 20 * dpi - 2 * margeX);
+
+    float yOffset = 35.0f * dpi;
+    float startY = origin.y + yOffset;
 
     // -----------------------------
     // Bloc FORMES
     // -----------------------------
-    Rectangle zoneForme = { (float)x, (35*dpi), (float)w, (60*dpi) };
+    Rectangle zoneForme = { (float)x, startY, (float)w, (60*dpi) };
     DrawRectangleRec(zoneForme, (Color){220,220,220,255});
     DrawRectangleLinesEx(zoneForme, 2, (Color){170,170,170,255});
 
@@ -84,22 +90,23 @@ void DessinerPageOscillateur(AppState *etat, int zoneX)
     if (DessinerBoutonOnde(b3, ICON_WAVE_TRIANGULAR,  "Triangle", etat->formeOnde == ONDE_TRIANGULAIRE))  etat->formeOnde = ONDE_TRIANGULAIRE;
     if (DessinerBoutonOnde(b4, ICON_WAVE,             "Scie",     etat->formeOnde == ONDE_DENT_DE_SCIE))  etat->formeOnde = ONDE_DENT_DE_SCIE;
 
-    float y = zoneForme.y + zoneForme.height + 10*dpi;
+    //float y = zoneForme.y + zoneForme.height + 10*dpi;
+    float currentY = zoneForme.y + zoneForme.height + 10*dpi;
 
 
-    Rectangle groupeFreq = { (float)x, y, (float)w, (50*dpi) };
+    Rectangle groupeFreq = { (float)x, currentY, (float)w, (50*dpi) };
     DrawRectangleRec(groupeFreq, (Color){220,220,220,255});
     DrawRectangleLinesEx(groupeFreq, 2, (Color){170,170,170,255});
 
     DessinerSliderAvecBoutons(groupeFreq, "FREQUENCE", &etat->frequenceHz,
                               20.0f, 2000.0f, 10.0f, "%.0f Hz");
 
-    y += groupeFreq.height + 10*dpi;
+    currentY += groupeFreq.height + 10*dpi;
 
     // -----------------------------
     // Bloc VOLUME
     // -----------------------------
-    Rectangle groupeVol = { (float)x, y, (float)w, (float)(50*dpi) };
+    Rectangle groupeVol = { (float)x, currentY, (float)w, (50*dpi) };
     DrawRectangleRec(groupeVol, (Color){220,220,220,255});
     DrawRectangleLinesEx(groupeVol, 2, (Color){170,170,170,255});
 
@@ -108,11 +115,11 @@ void DessinerPageOscillateur(AppState *etat, int zoneX)
                               0.0f, 100.0f, 5.0f, "%.0f %%");
     etat->volume = volumePourcent / 100.0f;
 
-    y += groupeVol.height + 10*dpi;
+    currentY += groupeVol.height + 10*dpi;
 
 
     Color fond = etat->lecture ? (Color){210, 80, 80, 255} : (Color){90, 180, 110, 255};
-    Rectangle btnPlay = { (float)x, y, (float)w, (35*dpi) };
+    Rectangle btnPlay = { (float)x, currentY, (float)w, (35*dpi) };
     DrawRectangleRec(btnPlay, fond);
     DrawRectangleLinesEx(btnPlay, 2, (Color){60,60,60,255});
 
@@ -139,9 +146,11 @@ void DessinerPageOscillateur(AppState *etat, int zoneX)
     // Restaurer style
     GuiSetStyle(BUTTON, BASE_COLOR_NORMAL, prevBaseColor);
     GuiSetStyle(BUTTON, TEXT_COLOR_NORMAL, prevTextColor);
-    y += btnPlay.height + 15*dpi;
-    DrawText("VISUALISATION", x, (int)(y + 5*dpi), (int)(14*dpi), DARKGRAY);
-    Rectangle zoneVisu = { (float)x, y + 25*dpi, (float)w, (140*dpi) };
+
+    currentY += btnPlay.height + 15*dpi;
+
+    DrawText("VISUALISATION", x, (int)(currentY + 5*dpi), (int)(14*dpi), DARKGRAY);
+    Rectangle zoneVisu = { (float)x, currentY + 25*dpi, (float)w, (140*dpi) };
     DrawRectangleRec(zoneVisu, (Color){30,30,30,255});
     DrawRectangleLinesEx(zoneVisu, 2, (Color){170,170,170,255});
 
@@ -191,4 +200,7 @@ void DessinerPageOscillateur(AppState *etat, int zoneX)
         DrawLineV(p1, p2, (Color){180,180,180,255});
     }
 
+    float finalY = currentY + 25*dpi + 140*dpi + 20*dpi; // + 20 dpi padding
+
+    EndPageContent(finalY, origin.y, &etat->heightOscillator);
 }

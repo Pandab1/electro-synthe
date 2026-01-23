@@ -1,5 +1,4 @@
 #include "raylib.h"
-#include <math.h>
 
 #include "../include/gui_interface.h"
 #include "../include/gui_components.h"
@@ -63,10 +62,13 @@ static void DessinerVisualisationADSR(AppState *etat, Rectangle zone)
 void DessinerPageEnveloppe(AppState *etat, int zoneX)
 {
     float dpi = GetAppDPI();
+
+    Vector2 origin = BeginPageContent(zoneX, &etat->heightEnveloppe, &etat->scrollEnveloppe);
+
     int margeX = (int)(20 * dpi);
-    int x = zoneX + margeX;
-    int w = GetScreenWidth() - zoneX - 2 * margeX;
-    float y = 25 * dpi;
+    int x = (int)(origin.x + margeX);
+    int w = (int)((GetScreenWidth() - zoneX) - 20 * dpi - 2 * margeX);
+    float y = origin.y + 25 * dpi;
 
     // --- SECTION 1 : EXPLICATION ---
     Rectangle zoneInfo = { (float)x, y, (float)w, (float)(100 * dpi) };
@@ -82,35 +84,39 @@ void DessinerPageEnveloppe(AppState *etat, int zoneX)
     y += zoneInfo.height + 15 * dpi;
 
     // --- SECTION 2 : SLIDERS ---
-    float hSlider = 70.0f * dpi;
+    float hSliderRec = 70.0f * dpi;
     float espacement = 10.0f * dpi;
 
     // ATTACK
-    Rectangle rAttack = { (float)x, y, (float)w, hSlider };
+    Rectangle rAttack = { (float)x, y, (float)w, hSliderRec };
     DrawRectangleRec(rAttack, (Color){230, 230, 230, 255});
     DessinerSliderAvecBoutons(rAttack, "ATTACK TIME", &etat->adsr.attack, 0.0f, 2.0f, 0.05f, "%.2fs");
-    y += hSlider + espacement;
+    y += hSliderRec + espacement;
 
     // DECAY
-    Rectangle rDecay = { (float)x, y, (float)w, hSlider };
+    Rectangle rDecay = { (float)x, y, (float)w, hSliderRec };
     DrawRectangleRec(rDecay, (Color){230, 230, 230, 255});
     DessinerSliderAvecBoutons(rDecay, "DECAY TIME", &etat->adsr.decay, 0.0f, 2.0f, 0.05f, "%.2fs");
-    y += hSlider + espacement;
+    y += hSliderRec + espacement;
 
     // SUSTAIN
-    Rectangle rSustain = { (float)x, y, (float)w, hSlider };
+    Rectangle rSustain = { (float)x, y, (float)w, hSliderRec };
     DrawRectangleRec(rSustain, (Color){230, 230, 230, 255});
     DessinerSliderAvecBoutons(rSustain, "SUSTAIN LEVEL", &etat->adsr.sustain, 0.0f, 1.0f, 0.05f, "%.2f");
-    y += hSlider + espacement;
+    y += hSliderRec + espacement;
 
     // RELEASE
-    Rectangle rRelease = { (float)x, y, (float)w, hSlider };
+    Rectangle rRelease = { (float)x, y, (float)w, hSliderRec };
     DrawRectangleRec(rRelease, (Color){230, 230, 230, 255});
     DessinerSliderAvecBoutons(rRelease, "RELEASE TIME", &etat->adsr.release, 0.0f, 3.0f, 0.05f, "%.2fs");
-    y += hSlider + espacement;
+    y += hSliderRec + espacement;
 
     // --- SECTION 3 : VISUALISATION ---
     DrawText("VISUALISATION ADSR", x, (int)(y + 5), (int)(12 * dpi), DARKGRAY);
     Rectangle zoneVisu = { (float)x, y + 25 * dpi, (float)w, (float)(120 * dpi) };
     DessinerVisualisationADSR(etat, zoneVisu);
+
+    float finalY = zoneVisu.y + zoneVisu.height + 25*dpi; // padding
+
+    EndPageContent(finalY, origin.y, &etat->heightEnveloppe);
 }

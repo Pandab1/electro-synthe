@@ -56,7 +56,9 @@ int main(void) {
   const int screenWidth = 1000;
   const int screenHeight = 800;
 
+  SetConfigFlags(FLAG_WINDOW_RESIZABLE);
   InitWindow(screenWidth, screenHeight, "Electro-synthé");
+  SetWindowMinSize(780, 500);
   SetTargetFPS(60);
 
   // Init state
