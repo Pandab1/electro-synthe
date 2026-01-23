@@ -5,11 +5,10 @@
 #include <stdio.h>
 
 #define FREQ 44100
-#define AMPLITUDE 30000
 
 struct Notes {
-  f32 freq;
-  f32 dur;
+  float freq;
+  float dur;
 };
 
 enum WaveType { SIN, SQU, ST, TRI };
@@ -30,7 +29,7 @@ int main(void) {
 
   u32 num_notes = sizeof(notes) / sizeof(notes[0]);
 
-  f32 duration = 0.0f;
+  float duration = 0.0f;
   for (u32 i = 0; i < num_notes; i++) {
     duration += notes[i].dur;
   }
@@ -59,11 +58,11 @@ int main(void) {
 void generate_sound(FILE *f, u32 num_sample, u32 num_notes,
                     struct Notes notes[], enum WaveType type) {
   u32 cur_note = 0;
-  f32 cur_note_start = 0.0f;
+  float cur_note_start = 0.0f;
   for (u32 i = 0; i < num_sample; i++) {
-    f32 t = (f32)i / FREQ;
+    float t = (float)i / FREQ;
 
-    f32 y = 0.0f;
+    float y = 0.0f;
 
     if (cur_note < num_notes) {
       switch (type) {
@@ -71,7 +70,7 @@ void generate_sound(FILE *f, u32 num_sample, u32 num_notes,
         y = generate_sin(t, notes[cur_note].freq);
         break;
       case SQU:
-        y = generate_square(t, notes[cur_note].freq, AMPLITUDE);
+        y = generate_square(t, notes[cur_note].freq);
         break;
       case ST:
         y = generate_sawtooth(t, notes[cur_note].freq);

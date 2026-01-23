@@ -1,15 +1,12 @@
 #ifndef MATH_H
 #define MATH_H
 
-#include "utils_maths.h"
-#include <stdio.h>
+float generate_sin(float time, float freq);
 
-f32 generate_sin(f32 time, f32 freq);
+float generate_square(float time, float freq);
 
-f32 generate_square(f32 time, f32 freq, int ampl);
+float generate_triangle(float time, float freq);
 
-f32 generate_triangle(f32 time, f32 freq);
-
-f32 generate_sawtooth(f32 time, f32 freq);
+float generate_sawtooth(float time, float freq);
 
 #endif // MATH_H
