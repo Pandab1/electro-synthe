@@ -3,6 +3,7 @@
 #include "utils_maths.h"
 #include "raylib.h"
 #include "../include/gui_interface.h"
+#include "../include/input.h"
 
 
 #include <stdio.h>
@@ -73,6 +74,8 @@ int main(void) {
 
   while (!WindowShouldClose())
   {
+    HandleKeyboardShortcuts(&myState); 
+
     BeginDrawing();
     // gui.c
     DrawAppInterface(&myState);

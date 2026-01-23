@@ -76,9 +76,8 @@ static void DessinerMenuLateral(AppState *etat)
     DessinerBoutonMenu(etat, "#122#Output" /*ICON_AUDIO*/,     PAGE_OUTPUT,     x, y, w, h); y += h + s;
     DessinerBoutonMenu(etat, "#193#Help" /*ICON_HELP*/,       PAGE_HELP,       x, y, w, h); y += h + s;
 
-    // ==========================
+
     // Bloc moteur audio (en bas)
-    // ==========================
     y += (int)(20*dpi);
 
     // séparation
@@ -169,7 +168,6 @@ GuiSetStyle(DEFAULT, TEXT_SIZE, prevTextSize);
 }
 
 
-/* ------------- API publique -------------- */
 
 void InitGuiStyle(void)
 {
