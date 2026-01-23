@@ -136,6 +136,39 @@ void InitGuiStyle(void)
     GuiSetStyle(DEFAULT, TEXT_SIZE, (int)(16 * dpi));
 }
 
+Vector2 BeginPageContent(int zoneX, float *contentHeight, Vector2 *scrollState)
+{
+    float dpi = GetAppDPI();
+    Rectangle panelRec = {
+        (float)zoneX,
+        0.0f,
+        (float)(GetScreenWidth() - zoneX),
+        (float)GetScreenHeight()
+    };
+
+    float height = *contentHeight;
+    if (height < panelRec.height) height = panelRec.height;
+
+    Rectangle contentRec = {
+        0.0f,
+        0.0f,
+        panelRec.width - 20 * dpi,
+        height
+    };
+
+    Rectangle view = {0};
+    GuiScrollPanel(panelRec, NULL, contentRec, scrollState, &view);
+
+    BeginScissorMode((int)view.x, (int)view.y, (int)view.width, (int)view.height);
+
+    return (Vector2){ view.x + scrollState->x, view.y + scrollState->y };
+}
+
+void EndPageContent(float finalY, float originY, float *contentHeight)
+{
+    EndScissorMode();
+    *contentHeight = finalY - originY;
+}
 
 
 void DrawAppInterface(AppState *etat)
