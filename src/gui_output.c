@@ -50,9 +50,13 @@ void DessinerPageOutput(AppState *etat, int zoneX)
 {
     float dpi = GetAppDPI();
 
-    int x = zoneX + (int)(20*dpi);
-    int y = (int)(30*dpi);
-    int w = GetScreenWidth() - zoneX - (int)(40*dpi);
+    Vector2 origin = BeginPageContent(zoneX, &etat->heightOutput, &etat->scrollOutput);
+
+    int mX = (int)(20*dpi);
+    int x = (int)(origin.x + mX);
+    int startY = (int)(origin.y);
+    int y = startY + (int)(30*dpi);
+    int w = (int)((GetScreenWidth() - zoneX) - 20 * dpi - 2*mX); // Width based on contentRec
 
     DrawText("OUTPUT (MONO)", x, y, (int)(20*dpi), DARKGRAY);
     y += (int)(30*dpi);
@@ -100,4 +104,6 @@ void DessinerPageOutput(AppState *etat, int zoneX)
 
     DrawText("Format cible : Mono - 44100 Hz - Float32", x, y, (int)(14*dpi), GRAY);
     y += (int)(18*dpi);
+
+    EndPageContent((float)y + 50*dpi, origin.y, &etat->heightOutput);
 }

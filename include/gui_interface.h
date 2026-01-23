@@ -2,6 +2,8 @@
 #define GUI_INTERFACE_H
 
 #include <stdbool.h>
+#include "raylib.h"
+
 float TextToFloat(const char *text);
 
 typedef enum PageApp {
@@ -41,6 +43,12 @@ typedef struct AppState {
     bool lecture;
 
     EnveloppeADSR adsr;
+    Vector2 scrollEnveloppe;
+    float heightEnveloppe;
+    Vector2 scrollOscillator;
+    float heightOscillator;
+    Vector2 scrollOutput;
+    float heightOutput;
 
     bool showMessage;
     float sliderValue;
@@ -50,5 +58,8 @@ typedef struct AppState {
 void InitGuiStyle(void);
 void DrawAppInterface(AppState *etat);
 float GetAppDPI(void);
+
+Vector2 BeginPageContent(int zoneX, float *contentHeight, Vector2 *scrollState);
+void EndPageContent(float finalY, float originY, float *contentHeight);
 
 #endif
