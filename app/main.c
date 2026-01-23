@@ -58,14 +58,15 @@ int main(void) {
 
   SetConfigFlags(FLAG_WINDOW_RESIZABLE);
   InitWindow(screenWidth, screenHeight, "Electro-synthé");
-  SetWindowMinSize(780, 500);
+  SetWindowMinSize(780, 600);
   SetTargetFPS(60);
 
   // Init state
   AppState myState = {
     .showMessage = false,
     .darkMode = false,
-    .sliderValue = 50.0f
+    .sliderValue = 50.0f,
+    .modeLecture = MODE_CONTINU
   };
 
   InitGuiStyle();
