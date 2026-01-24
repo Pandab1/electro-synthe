@@ -2,5 +2,6 @@
 #define GUI_OUTPUT_H
 #include "gui_interface.h"
 
-void DessinerPageOutput(AppState *etat, int zoneX);
+void DrawOutputPage(AppState *state, int zoneX);
 #endif
+

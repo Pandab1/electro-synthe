@@ -5,18 +5,18 @@
 #include <math.h>
 #include <stdio.h>
 
-static const char *NomForme(FormeOnde f)
+static const char *GetWaveformName(Waveform f)
 {
     switch (f) {
-        case ONDE_SINUS:        return "Sinusoïdale";
-        case ONDE_CARREE:       return "Carrée";
-        case ONDE_TRIANGULAIRE: return "Triangulaire";
-        case ONDE_DENT_DE_SCIE: return "Dent de scie";
+        case WAVE_SINE:        return "Sinusoïdale";
+        case WAVE_SQUARE:       return "Carrée";
+        case WAVE_TRIANGLE: return "Triangulaire";
+        case WAVE_SAWTOOTH: return "Dent de scie";
         default:                return "Inconnue";
     }
 }
 
-static float DbEstime(float volume01)
+static float EstimateDb(float volume01)
 {
     if (volume01 < 1e-6f) return -60.0f;
     return 20.0f * log10f(volume01);
@@ -46,11 +46,11 @@ static void DrawBar(int x, int y, int w, int h, float dpi, float t01, Color fill
     DrawRectangleRec(rf, fill);
 }
 
-void DessinerPageOutput(AppState *etat, int zoneX)
+void DrawOutputPage(AppState *state, int zoneX)
 {
     float dpi = GetAppDPI();
 
-    Vector2 origin = BeginPageContent(zoneX, &etat->heightOutput, &etat->scrollOutput);
+    Vector2 origin = BeginPageContent(zoneX, &state->heightOutput, &state->scrollOutput);
 
     int mX = (int)(20*dpi);
     int x = (int)(origin.x + mX);
@@ -65,32 +65,32 @@ void DessinerPageOutput(AppState *etat, int zoneX)
     int boxH = (int)(65*dpi);
     int colW = (w - gap) / 2;
 
-    char vForme[64], vFreq[64], vVol[64], vEtat[64];
+    char vWaveform[64], vFreq[64], vVol[64], vStatus[64];
 
-    snprintf(vForme, sizeof(vForme), "%s", NomForme(etat->formeOnde));
-    snprintf(vFreq,  sizeof(vFreq),  "%.0f Hz", etat->frequenceHz);
-    snprintf(vVol,   sizeof(vVol),   "%.0f %%", etat->volume * 100.0f);
+    snprintf(vWaveform, sizeof(vWaveform), "%s", GetWaveformName(state->waveform));
+    snprintf(vFreq,  sizeof(vFreq),  "%.0f Hz", state->frequencyHz);
+    snprintf(vVol,   sizeof(vVol),   "%.0f %%", state->volume * 100.0f);
 
-    const char *playTxt = etat->lecture ? "PLAY" : "STOP";
-    const char *audioTxt = etat->audioActif ? "ON" : "OFF";
-    snprintf(vEtat, sizeof(vEtat), "%s | AUDIO %s", playTxt, audioTxt);
+    const char *playbackTxt = state->playback ? "PLAY" : "STOP";
+    const char *audioTxt = state->audioActive ? "ON" : "OFF";
+    snprintf(vStatus, sizeof(vStatus), "%s | AUDIO %s", playbackTxt, audioTxt);
 
-    DrawCard(x,              y, colW, boxH, dpi, "Forme",     vForme, BLACK);
+    DrawCard(x,              y, colW, boxH, dpi, "Forme",     vWaveform, BLACK);
     DrawCard(x + colW + gap, y, colW, boxH, dpi, "Fréquence", vFreq,  BLACK);
 
     y += boxH + gap;
 
     DrawCard(x,              y, colW, boxH, dpi, "Volume",    vVol,   BLACK);
 
-    Color cEtat = etat->audioActif ? (Color){60,170,90,255} : (Color){210,80,80,255};
-    DrawCard(x + colW + gap, y, colW, boxH, dpi, "État",      vEtat,  cEtat);
+    Color cStatus = state->audioActive ? (Color){60,170,90,255} : (Color){210,80,80,255};
+    DrawCard(x + colW + gap, y, colW, boxH, dpi, "État",      vStatus,  cStatus);
 
     y += boxH + (int)(25*dpi);
 
     DrawText("Niveau (estimé)", x, y, (int)(16*dpi), DARKGRAY);
     y += (int)(22*dpi);
 
-    float db = DbEstime(etat->volume);
+    float db = EstimateDb(state->volume);
     char vDb[64];
     snprintf(vDb, sizeof(vDb), "%.1f dB", db);
     DrawText(vDb, x, y, (int)(18*dpi), BLACK);
@@ -115,5 +115,5 @@ void DessinerPageOutput(AppState *etat, int zoneX)
     DrawText("Format cible : Mono - 44100 Hz - Float32", x, y, (int)(14*dpi), GRAY);
     y += (int)(18*dpi);
 
-    EndPageContent((float)y + 50*dpi, origin.y, &etat->heightOutput);
+    EndPageContent((float)y + 50*dpi, origin.y, &state->heightOutput);
 }

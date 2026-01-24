@@ -8,51 +8,49 @@ float TextToFloat(const char *text);
 
 typedef enum PageApp {
     PAGE_OSCILLATOR = 0,
-    PAGE_ENVELOPPE  = 1,
+    PAGE_ENVELOPE  = 1,
     PAGE_OUTPUT     = 2,
     PAGE_HELP       = 3
 } PageApp;
 
-// Formes d'onde (oscillateur)
-typedef enum FormeOnde {
-    ONDE_SINUS = 0,
-    ONDE_CARREE,
-    ONDE_TRIANGULAIRE,
-    ONDE_DENT_DE_SCIE
-} FormeOnde;
+// Waveforms (oscillator)
+typedef enum Waveform {
+    WAVE_SINE = 0,
+    WAVE_SQUARE,
+    WAVE_TRIANGLE,
+    WAVE_SAWTOOTH
+} Waveform;
 
-typedef enum ModeLecture {
-    MODE_CONTINU = 0,
-    MODE_ENVELOPPE
-} ModeLecture;
+typedef enum PlaybackMode {
+    MODE_CONTINUOUS = 0,
+    MODE_ENVELOPE
+} PlaybackMode;
 
-typedef struct EnveloppeADSR {
-    float attack;   
+typedef struct EnvelopeADSR {
+    float attack;
     float decay;    
     float sustain;  
     float release; 
-} EnveloppeADSR;
+} EnvelopeADSR;
 
-// Etat global de l'application (UI + paramètres)
+// Global application state (UI + parameters)
 typedef struct AppState {
     bool darkMode;
-    PageApp pageCourante;
-    bool audioActif;
-    float phaseVisu;  
+    PageApp currentPage;
+    bool audioActive;
+    float visualPhase;
 
-    FormeOnde formeOnde;
+    Waveform waveform;
 
-    // Oscillateur
-    float frequenceHz;
+    // Oscillator
+    float frequencyHz;
     float volume;
-    bool lecture;
-    ModeLecture modeLecture;
+    bool playback;
+    PlaybackMode playbackMode;
 
-    EnveloppeADSR adsr;
-    //Enveloppe 
-    Vector2 scrollEnveloppe;
-    float heightEnveloppe;
-    //Oscillator
+    EnvelopeADSR adsr;
+    Vector2 scrollEnvelope;
+    float heightEnvelope;
     Vector2 scrollOscillator;
     float heightOscillator;
     //HELP
@@ -73,9 +71,9 @@ typedef struct AppState {
     float sliderValue;
 } AppState;
 
-// Fonctions GUI
+// GUI Functions
 void InitGuiStyle(void);
-void DrawAppInterface(AppState *etat);
+void DrawAppInterface(AppState *state);
 float GetAppDPI(void);
 
 Vector2 BeginPageContent(int zoneX, float *contentHeight, Vector2 *scrollState);
