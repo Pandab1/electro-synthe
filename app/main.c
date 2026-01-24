@@ -67,7 +67,7 @@ int main(void) {
     .showMessage = false,
     .darkMode = false,
     .sliderValue = 50.0f,
-    .modeLecture = MODE_CONTINU
+    .playbackMode = MODE_CONTINUOUS
   };
 
   InitGuiStyle();

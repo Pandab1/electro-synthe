@@ -3,6 +3,7 @@
 
 #include "gui_interface.h"
 
-void DessinerPageOscillateur(AppState *etat, int zoneX);
+void DrawOscillatorPage(AppState *state, int zoneX);
 
 #endif
+

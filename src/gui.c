@@ -9,7 +9,7 @@
 #include "../include/gui_interface.h"
 #include "../include/gui_components.h"
 #include "../include/gui_oscillator.h"
-#include "../include/gui_enveloppe.h"
+#include "../include/gui_envelope.h"
 
 
 #include "../include/raygui.h"
@@ -23,64 +23,64 @@ float TextToFloat(const char *text)
 
 float GetAppDPI(void)
 {
-    // soucis dpi avec linux hidpi à voir + tard...
+    // DPI issues with linux hidpi to be seen later...
     /*#ifdef __linux__
-    // Sur Linux, utiliser l'échelle DPI retournée par Raylib si disponible
+    // On Linux, use DPI scale returned by Raylib if available
     Vector2 scale = GetWindowScaleDPI();
     if (scale.x > 0.0f) return scale.x + (scale.x/2);
     return 1.5f;
     #else*/
-    // Valeur par défaut pour autres OS
+    // Default value for other OS
     return 1.5f;
     //#endif
 }
 
-/* ------------- Menu latéral -------------- */
+/* ------------- Sidebar Menu -------------- */
 
-static void DessinerBoutonMenu(AppState *etat, const char *libelle, PageApp page,
-                              int x, int y, int largeur, int hauteur)
+static void DrawMenuButton(AppState *state, const char *label, PageApp page,
+                              int x, int y, int width, int height)
 {
-    bool actif = (etat->pageCourante == page);
+    bool active = (state->currentPage == page);
 
-    Color fond = actif ? (Color){130,180,220,255} : (Color){200,200,200,255};
-    Color bord = actif ? (Color){90,140,180,255}  : (Color){160,160,160,255};
+    Color background = active ? (Color){130,180,220,255} : (Color){200,200,200,255};
+    Color border = active ? (Color){90,140,180,255}  : (Color){160,160,160,255};
 
-    DrawRectangle(x, y, largeur, hauteur, fond);
-    DrawRectangleLines(x, y, largeur, hauteur, bord);
+    DrawRectangle(x, y, width, height, background);
+    DrawRectangleLines(x, y, width, height, border);
 
-    if (GuiButton((Rectangle){(float)x, (float)y, (float)largeur, (float)hauteur}, libelle)) {
-        etat->pageCourante = page;
+    if (GuiButton((Rectangle){(float)x, (float)y, (float)width, (float)height}, label)) {
+        state->currentPage = page;
     }
 }
 
-static void DessinerMenuLateral(AppState *etat)
+static void DrawSidebar(AppState *state)
 {
     float dpi = GetAppDPI();
     int prevTextSize = GuiGetStyle(DEFAULT, TEXT_SIZE);
-    int largeurMenu = (int)(180 * dpi);
+    int sidebarWidth = (int)(180 * dpi);
 
     GuiSetStyle(DEFAULT, TEXT_SIZE, (int)(14 * dpi));
 
-    // Fond sidebar
-    DrawRectangle(0, 0, largeurMenu, GetScreenHeight(), (Color){220,220,220,255});
+    // Sidebar background
+    DrawRectangle(0, 0, sidebarWidth, GetScreenHeight(), (Color){220,220,220,255});
     DrawText("MENU", (int)(15*dpi), (int)(15*dpi), (int)(18*dpi), DARKGRAY);
 
     int x = (int)(10*dpi);
     int y = (int)(45*dpi);
-    int w = largeurMenu - (int)(20*dpi);
+    int w = sidebarWidth - (int)(20*dpi);
     int h = (int)(32*dpi);
     int s = (int)(8*dpi);
 
-    DessinerBoutonMenu(etat, "#125#Oscillator" /*ICON_WAVE_SINUS*/, PAGE_OSCILLATOR, x, y, w, h); y += h + s;
-    DessinerBoutonMenu(etat, "#124#Enveloppe" /*ICON_WAVE*/,  PAGE_ENVELOPPE,  x, y, w, h); y += h + s;
-    DessinerBoutonMenu(etat, "#122#Output" /*ICON_AUDIO*/,     PAGE_OUTPUT,     x, y, w, h); y += h + s;
-    DessinerBoutonMenu(etat, "#193#Help" /*ICON_HELP*/,       PAGE_HELP,       x, y, w, h); y += h + s;
+    DrawMenuButton(state, "#125#Oscillator" /*ICON_WAVE_SINUS*/, PAGE_OSCILLATOR, x, y, w, h); y += h + s;
+    DrawMenuButton(state, "#124#Envelope" /*ICON_WAVE*/,  PAGE_ENVELOPE,  x, y, w, h); y += h + s;
+    DrawMenuButton(state, "#122#Output" /*ICON_AUDIO*/,     PAGE_OUTPUT,     x, y, w, h); y += h + s;
+    DrawMenuButton(state, "#193#Help" /*ICON_HELP*/,       PAGE_HELP,       x, y, w, h); y += h + s;
 
 
-    // Bloc moteur audio (en bas)
+    // Audio engine block (at bottom)
     y += (int)(20*dpi);
 
-    // séparation
+    // separation line
     DrawLine(x, y, x + w, y, (Color){160,160,160,255});
     y += (int)(10*dpi);
 
@@ -94,15 +94,15 @@ static void DessinerMenuLateral(AppState *etat)
         (float)(45*dpi)
     };
 
-    // Couleur selon état
-    Color c = etat->audioActif ? (Color){70,180,110,255} : (Color){200,70,70,255};
+    // Color according to state
+    Color c = state->audioActive ? (Color){70,180,110,255} : (Color){200,70,70,255};
 
-    // Dessin du bouton (custom)
+    // Draw custom button
     DrawRectangleRec(btn, c);
     DrawRectangleLinesEx(btn, 2, (Color){60,60,60,255});
 
-    // Texte centré
-    const char *txt = etat->audioActif ? "AUDIO : ON" : "AUDIO : OFF";
+    // Centered text
+    const char *txt = state->audioActive ? "AUDIO : ON" : "AUDIO : OFF";
     int fs = (int)(16*dpi);
     int tw = MeasureText(txt, fs);
 
@@ -112,20 +112,20 @@ static void DessinerMenuLateral(AppState *etat)
             fs,
             RAYWHITE);
 
-    // Zone cliquable (UNE SEULE FOIS)
+    // Clickable zone
     if (CheckCollisionPointRec(GetMousePosition(), btn) &&
         IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
     {
-        etat->audioActif = !etat->audioActif;
+        state->audioActive = !state->audioActive;
 
-        // Si on coupe le moteur audio => on stoppe la lecture aussi
-        if (!etat->audioActif) {
-            etat->lecture = false;
+        // If we stop audio engine => stop playback too
+        if (!state->audioActive) {
+            state->playback = false;
         }
     }
 
     // ==========================
-    // Bouton Mode Lecture
+    // Playback Mode Button
     // ==========================
     y += (int)(btn.height + 15*dpi);
 
@@ -139,15 +139,15 @@ static void DessinerMenuLateral(AppState *etat)
         (float)(45*dpi)
     };
 
-    // Couleur selon mode
-    Color cMode = (etat->modeLecture == MODE_CONTINU)
-                  ? (Color){130,180,220,255}  // Bleu (Continu)
-                  : (Color){160,100,200,255}; // Violet (Enveloppe)
+    // Color according to mode
+    Color cMode = (state->playbackMode == MODE_CONTINUOUS)
+                  ? (Color){130,180,220,255}  // Blue (Continuous)
+                  : (Color){160,100,200,255}; // Purple (Envelope)
 
     DrawRectangleRec(btnMode, cMode);
     DrawRectangleLinesEx(btnMode, 2, (Color){60,60,60,255});
 
-    const char *txtMode = (etat->modeLecture == MODE_CONTINU) ? "CONTINU" : "ENVELOPPE";
+    const char *txtMode = (state->playbackMode == MODE_CONTINUOUS) ? "CONTINU" : "ENVELOPPE";
     int twMode = MeasureText(txtMode, fs);
 
     DrawText(txtMode,
@@ -159,9 +159,9 @@ static void DessinerMenuLateral(AppState *etat)
     if (CheckCollisionPointRec(GetMousePosition(), btnMode) &&
         IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
     {
-        // Bascule
-        if (etat->modeLecture == MODE_CONTINU) etat->modeLecture = MODE_ENVELOPPE;
-        else etat->modeLecture = MODE_CONTINU;
+        // Toggle
+        if (state->playbackMode == MODE_CONTINUOUS) state->playbackMode = MODE_ENVELOPE;
+        else state->playbackMode = MODE_CONTINUOUS;
     }
 
 GuiSetStyle(DEFAULT, TEXT_SIZE, prevTextSize);
@@ -210,36 +210,36 @@ void EndPageContent(float finalY, float originY, float *contentHeight)
 }
 
 
-void DrawAppInterface(AppState *etat)
+void DrawAppInterface(AppState *state)
 {
-    if (etat->lecture && !etat->audioActif) {
-    etat->audioActif = true;
+    if (state->playback && !state->audioActive) {
+    state->audioActive = true;
     }
     ClearBackground(RAYWHITE);
 
-    DessinerMenuLateral(etat);
+    DrawSidebar(state);
 
     float dpi = GetAppDPI();
-    int largeurMenu = (int)(180 * dpi);
-    int zoneX = largeurMenu;
+    int sidebarWidth = (int)(180 * dpi);
+    int zoneX = sidebarWidth;
 
     DrawRectangle(zoneX, 0,
                   GetScreenWidth()-zoneX,
                   GetScreenHeight(),
                   (Color){245,245,245,255});
 
-    switch (etat->pageCourante) {
+    switch (state->currentPage) {
         case PAGE_OSCILLATOR:
-            DessinerPageOscillateur(etat, zoneX);
+            DrawOscillatorPage(state, zoneX);
             break;
-        case PAGE_ENVELOPPE:
-            DessinerPageEnveloppe(etat, zoneX);
+        case PAGE_ENVELOPE:
+            DrawEnvelopePage(state, zoneX);
             break;
         case PAGE_OUTPUT:
-            DessinerPageOutput(etat, zoneX);
+            DrawOutputPage(state, zoneX);
             break;
         case PAGE_HELP:
-            DessinerPageHelp(etat, zoneX);
+            DrawHelpPage(state, zoneX);
             break;
         default:
             break;

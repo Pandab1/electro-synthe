@@ -3,5 +3,5 @@
 #include "gui_interface.h"
 #include "raylib.h"
 
-void DessinerPageHelp(AppState *etat, int zoneX);
+void DrawHelpPage(AppState *state, int zoneX);
 #endif

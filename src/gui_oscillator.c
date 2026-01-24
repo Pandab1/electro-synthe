@@ -8,32 +8,32 @@
 #include "../include/gui_oscillator.h"
 
 // ---------------------------------------------------------------------
-// Calcul de la valeur Y d'une forme d'onde (avec phase animée)
-// cyclesVisibles = nombre de périodes affichées sur la largeur du graphe
-// phase = décalage (0..1) qui avance dans le temps quand on joue
+// Calculate Y value of a waveform (with animated phase)
+// visibleCycles = number of periods displayed on the graph width
+// phase = offset (0..1) that advances in time when playing
 // ---------------------------------------------------------------------
-static float CalculerY(int x, int largeur, float cyclesVisibles, float amp, FormeOnde type, float phase)
+static float CalculateY(int x, int width, float visibleCycles, float amp, Waveform type, float phase)
 {
-    // t en "cycles": (x/largeur)*cyclesVisibles + phase
-    float t = ((float)x / (float)largeur) * cyclesVisibles + phase;
+    // t in "cycles": (x/width)*visibleCycles + phase
+    float t = ((float)x / (float)width) * visibleCycles + phase;
 
     float s = 0.0f;
 
     switch (type) {
-        case ONDE_SINUS:
+        case WAVE_SINE:
             s = sinf(2.0f * PI * t);
             break;
 
-        case ONDE_CARREE:
+        case WAVE_SQUARE:
             s = (sinf(2.0f * PI * t) >= 0.0f) ? 1.0f : -1.0f;
             break;
 
-        case ONDE_TRIANGULAIRE:
+        case WAVE_TRIANGLE:
             s = (2.0f / PI) * asinf(sinf(2.0f * PI * t));
             break;
 
-        case ONDE_DENT_DE_SCIE: {
-            float frac = t - floorf(t);     // partie fractionnaire [0..1]
+        case WAVE_SAWTOOTH: {
+            float frac = t - floorf(t);     // fractional part [0..1]
             s = 2.0f * frac - 1.0f;         // -1 -> 1
         } break;
 
@@ -46,154 +46,151 @@ static float CalculerY(int x, int largeur, float cyclesVisibles, float amp, Form
 }
 
 // =====================================================================
-// Page Oscillateur
+// Oscillator Page
 // =====================================================================
-void DessinerPageOscillateur(AppState *etat, int zoneX)
+void DrawOscillatorPage(AppState *state, int zoneX)
 {
     float dpi = GetAppDPI();
 
-    Vector2 origin = BeginPageContent(zoneX, &etat->heightOscillator, &etat->scrollOscillator);
+    Vector2 origin = BeginPageContent(zoneX, &state->heightOscillator, &state->scrollOscillator);
 
-    // Assure une taille texte correcte pour les widgets (boutons/slider)
+    // Ensure correct text size for widgets (buttons/slider)
     GuiSetStyle(DEFAULT, TEXT_SIZE, (int)(16 * dpi));
 
-    int margeX = (int)(20 * dpi);
-    // Position relative au scroll
-    int x = (int)(origin.x + margeX);
-    int w = (int)((GetScreenWidth() - zoneX) - 20 * dpi - 2 * margeX);
+    int marginX = (int)(20 * dpi);
+    // Position relative to scroll
+    int x = (int)(origin.x + marginX);
+    int w = (int)((GetScreenWidth() - zoneX) - 20 * dpi - 2 * marginX);
 
     float yOffset = 35.0f * dpi;
     float startY = origin.y + yOffset;
 
     // -----------------------------
-    // Bloc FORMES
+    // WAVEFORMS Block
     // -----------------------------
-    Rectangle zoneForme = { (float)x, startY, (float)w, (60*dpi) };
-    DrawRectangleRec(zoneForme, (Color){220,220,220,255});
-    DrawRectangleLinesEx(zoneForme, 2, (Color){170,170,170,255});
+    Rectangle waveformZone = { (float)x, startY, (float)w, (60*dpi) };
+    DrawRectangleRec(waveformZone, (Color){220,220,220,255});
+    DrawRectangleLinesEx(waveformZone, 2, (Color){170,170,170,255});
 
-    DrawText("FORME D'ONDE", (int)(zoneForme.x + 10*dpi), (int)(zoneForme.y + 6*dpi), (int)(14*dpi), DARKGRAY);
+    DrawText("FORME D'ONDE", (int)(waveformZone.x + 10*dpi), (int)(waveformZone.y + 6*dpi), (int)(14*dpi), DARKGRAY);
 
-    float marge = 10.0f * dpi;
-    float espace = 12.0f * dpi;
+    float margin = 10.0f * dpi;
+    float spacing = 12.0f * dpi;
     float hBtn = 30.0f * dpi;
-    float lBtn = (zoneForme.width - 2*marge - 3*espace) / 4.0f;
-    float yBtn = zoneForme.y + 24*dpi;
+    float wBtn = (waveformZone.width - 2*margin - 3*spacing) / 4.0f;
+    float yBtn = waveformZone.y + 24*dpi;
 
-    Rectangle b1 = { zoneForme.x + marge + (lBtn + espace)*0, yBtn, lBtn, hBtn };
-    Rectangle b2 = { zoneForme.x + marge + (lBtn + espace)*1, yBtn, lBtn, hBtn };
-    Rectangle b3 = { zoneForme.x + marge + (lBtn + espace)*2, yBtn, lBtn, hBtn };
-    Rectangle b4 = { zoneForme.x + marge + (lBtn + espace)*3, yBtn, lBtn, hBtn };
+    Rectangle b1 = { waveformZone.x + margin + (wBtn + spacing)*0, yBtn, wBtn, hBtn };
+    Rectangle b2 = { waveformZone.x + margin + (wBtn + spacing)*1, yBtn, wBtn, hBtn };
+    Rectangle b3 = { waveformZone.x + margin + (wBtn + spacing)*2, yBtn, wBtn, hBtn };
+    Rectangle b4 = { waveformZone.x + margin + (wBtn + spacing)*3, yBtn, wBtn, hBtn };
 
-    if (DessinerBoutonOnde(b1, ICON_WAVE_SINUS,       "Sinus",    etat->formeOnde == ONDE_SINUS))         etat->formeOnde = ONDE_SINUS;
-    if (DessinerBoutonOnde(b2, ICON_WAVE_SQUARE,      "Carrée",   etat->formeOnde == ONDE_CARREE))        etat->formeOnde = ONDE_CARREE;
-    if (DessinerBoutonOnde(b3, ICON_WAVE_TRIANGULAR,  "Triangle", etat->formeOnde == ONDE_TRIANGULAIRE))  etat->formeOnde = ONDE_TRIANGULAIRE;
-    if (DessinerBoutonOnde(b4, ICON_WAVE,             "Scie",     etat->formeOnde == ONDE_DENT_DE_SCIE))  etat->formeOnde = ONDE_DENT_DE_SCIE;
+    if (DrawWaveButton(b1, ICON_WAVE_SINUS,       "Sinus",     state->waveform == WAVE_SINE))     state->waveform = WAVE_SINE;
+    if (DrawWaveButton(b2, ICON_WAVE_SQUARE,      "Carrée",   state->waveform == WAVE_SQUARE))   state->waveform = WAVE_SQUARE;
+    if (DrawWaveButton(b3, ICON_WAVE_TRIANGULAR,  "Triangle", state->waveform == WAVE_TRIANGLE)) state->waveform = WAVE_TRIANGLE;
+    if (DrawWaveButton(b4, ICON_WAVE,             "Scie", state->waveform == WAVE_SAWTOOTH)) state->waveform = WAVE_SAWTOOTH;
 
-    //float y = zoneForme.y + zoneForme.height + 10*dpi;
-    float currentY = zoneForme.y + zoneForme.height + 10*dpi;
+    float currentY = waveformZone.y + waveformZone.height + 10*dpi;
 
 
-    Rectangle groupeFreq = { (float)x, currentY, (float)w, (50*dpi) };
-    DrawRectangleRec(groupeFreq, (Color){220,220,220,255});
-    DrawRectangleLinesEx(groupeFreq, 2, (Color){170,170,170,255});
+    Rectangle freqGroup = { (float)x, currentY, (float)w, (50*dpi) };
+    DrawRectangleRec(freqGroup, (Color){220,220,220,255});
+    DrawRectangleLinesEx(freqGroup, 2, (Color){170,170,170,255});
 
-    DessinerSliderAvecBoutons(groupeFreq, "FREQUENCE", &etat->frequenceHz,
+    DrawSliderWithButtons(freqGroup, "FREQUENCE", &state->frequencyHz,
                               20.0f, 2000.0f, 10.0f, "%.0f Hz");
 
-    currentY += groupeFreq.height + 10*dpi;
+    currentY += freqGroup.height + 10*dpi;
 
-    // Bloc VOLUME
-    Rectangle groupeVol = { (float)x, currentY, (float)w, (50*dpi) };
-    DrawRectangleRec(groupeVol, (Color){220,220,220,255});
-    DrawRectangleLinesEx(groupeVol, 2, (Color){170,170,170,255});
+    // VOLUME Block
+    Rectangle volGroup = { (float)x, currentY, (float)w, (50*dpi) };
+    DrawRectangleRec(volGroup, (Color){220,220,220,255});
+    DrawRectangleLinesEx(volGroup, 2, (Color){170,170,170,255});
 
-    float volumePourcent = etat->volume * 100.0f;
-    DessinerSliderAvecBoutons(groupeVol, "VOLUME", &volumePourcent,
+    float volumePercent = state->volume * 100.0f;
+    DrawSliderWithButtons(volGroup, "VOLUME", &volumePercent,
                               0.0f, 100.0f, 5.0f, "%.0f %%");
-    etat->volume = volumePourcent / 100.0f;
+    state->volume = volumePercent / 100.0f;
 
-    currentY += groupeVol.height + 10*dpi;
+    currentY += volGroup.height + 10*dpi;
 
 
-    Color fond = etat->lecture ? (Color){210, 80, 80, 255} : (Color){90, 180, 110, 255};
+    Color background = state->playback ? (Color){210, 80, 80, 255} : (Color){90, 180, 110, 255};
     Rectangle btnPlay = { (float)x, currentY, (float)w, (35*dpi) };
-    DrawRectangleRec(btnPlay, fond);
+    DrawRectangleRec(btnPlay, background);
     DrawRectangleLinesEx(btnPlay, 2, (Color){60,60,60,255});
 
-    bool isPressed = etat->lecture;
-
-    const char *txt = etat->lecture ? GuiIconText(ICON_PLAYER_STOP, "STOP") : GuiIconText(ICON_PLAYER_PLAY, "PLAY");
+    const char *txt = state->playback ? GuiIconText(ICON_PLAYER_STOP, "STOP") : GuiIconText(ICON_PLAYER_PLAY, "PLAY");
 
     int prevBaseColor = GuiGetStyle(BUTTON, BASE_COLOR_NORMAL);
     int prevTextColor = GuiGetStyle(BUTTON, TEXT_COLOR_NORMAL);
 
-    if (etat->lecture) {
-        GuiSetStyle(BUTTON, BASE_COLOR_NORMAL, 0xD25050FF); 
+    if (state->playback) {
+        GuiSetStyle(BUTTON, BASE_COLOR_NORMAL, 0xD25050FF);
         GuiSetStyle(BUTTON, TEXT_COLOR_NORMAL, 0xFFFFFFFF);
     } else {
         GuiSetStyle(BUTTON, BASE_COLOR_NORMAL, 0x5AB46EFF); 
         GuiSetStyle(BUTTON, TEXT_COLOR_NORMAL, 0xFFFFFFFF);
     }
     if (GuiButton(btnPlay, txt)) {
-        etat->lecture = !etat->lecture;
+        state->playback = !state->playback;
 
-        if (etat->lecture) etat->audioActif = true;
-        else              etat->audioActif = false;
+        if (state->playback) state->audioActive = true;
+        else              state->audioActive = false;
     }
-    // Restaurer style
+    // Restore style
     GuiSetStyle(BUTTON, BASE_COLOR_NORMAL, prevBaseColor);
     GuiSetStyle(BUTTON, TEXT_COLOR_NORMAL, prevTextColor);
 
     currentY += btnPlay.height + 15*dpi;
 
     DrawText("VISUALISATION", x, (int)(currentY + 5*dpi), (int)(14*dpi), DARKGRAY);
-    Rectangle zoneVisu = { (float)x, currentY + 25*dpi, (float)w, (140*dpi) };
-    DrawRectangleRec(zoneVisu, (Color){30,30,30,255});
-    DrawRectangleLinesEx(zoneVisu, 2, (Color){170,170,170,255});
+    Rectangle visualizationZone = { (float)x, currentY + 25*dpi, (float)w, (140*dpi) };
+    DrawRectangleRec(visualizationZone, (Color){30,30,30,255});
+    DrawRectangleLinesEx(visualizationZone, 2, (Color){170,170,170,255});
 
-    // Grille
+    // Grid
     for (int i = 1; i < 6; i++) {
-        float gx = zoneVisu.x + (zoneVisu.width * i / 6.0f);
-        DrawLine((int)gx, (int)zoneVisu.y, (int)gx, (int)(zoneVisu.y + zoneVisu.height), (Color){60,60,60,255});
+        float gx = visualizationZone.x + (visualizationZone.width * i / 6.0f);
+        DrawLine((int)gx, (int)visualizationZone.y, (int)gx, (int)(visualizationZone.y + visualizationZone.height), (Color){60,60,60,255});
     }
-    DrawLine((int)zoneVisu.x,
-             (int)(zoneVisu.y + zoneVisu.height/2),
-             (int)(zoneVisu.x + zoneVisu.width),
-             (int)(zoneVisu.y + zoneVisu.height/2),
+    DrawLine((int)visualizationZone.x,
+             (int)(visualizationZone.y + visualizationZone.height/2),
+             (int)(visualizationZone.x + visualizationZone.width),
+             (int)(visualizationZone.y + visualizationZone.height/2),
              (Color){70,70,70,255});
 
-    if (etat->lecture && etat->audioActif) {
+    if (state->playback && state->audioActive) {
     float dt = GetFrameTime();
     const float scrollCyclesPerSec = 1.0f; 
-    etat->phaseVisu += dt * scrollCyclesPerSec;
-    etat->phaseVisu -= floorf(etat->phaseVisu);
+    state->visualPhase += dt * scrollCyclesPerSec;
+    state->visualPhase -= floorf(state->visualPhase);
     }
 
-    int largeurCourbe = (int)zoneVisu.width - 20;
+    int curveWidth = (int)visualizationZone.width - 20;
 
-    // amplitude visuelle
-    float amp = (zoneVisu.height * 0.35f) * etat->volume;
+    // visual amplitude
+    float amp = (visualizationZone.height * 0.35f) * state->volume;
 
     const float windowTime = 0.010f;         
-    float cyclesVisibles = etat->frequenceHz * windowTime;
+    float visibleCycles = state->frequencyHz * windowTime;
 
-    if (cyclesVisibles < 0.25f) cyclesVisibles = 0.25f;
+    if (visibleCycles < 0.25f) visibleCycles = 0.25f;
 
-    for (int i = 0; i < largeurCourbe - 1; i++) {
-        float y1 = (zoneVisu.y + zoneVisu.height/2)
-                 + CalculerY(i, largeurCourbe, cyclesVisibles, amp, etat->formeOnde, etat->phaseVisu);
+    for (int i = 0; i < curveWidth - 1; i++) {
+        float y1 = (visualizationZone.y + visualizationZone.height/2)
+                 + CalculateY(i, curveWidth, visibleCycles, amp, state->waveform, state->visualPhase);
 
-        float y2 = (zoneVisu.y + zoneVisu.height/2)
-                 + CalculerY(i+1, largeurCourbe, cyclesVisibles, amp, etat->formeOnde, etat->phaseVisu);
+        float y2 = (visualizationZone.y + visualizationZone.height/2)
+                 + CalculateY(i+1, curveWidth, visibleCycles, amp, state->waveform, state->visualPhase);
 
-        Vector2 p1 = { zoneVisu.x + 10 + (float)i,     y1 };
-        Vector2 p2 = { zoneVisu.x + 10 + (float)i + 1, y2 };
+        Vector2 p1 = { visualizationZone.x + 10 + (float)i,     y1 };
+        Vector2 p2 = { visualizationZone.x + 10 + (float)i + 1, y2 };
 
         DrawLineV(p1, p2, (Color){180,180,180,255});
     }
 
     float finalY = currentY + 25*dpi + 140*dpi + 20*dpi; // + 20 dpi padding
 
-    EndPageContent(finalY, origin.y, &etat->heightOscillator);
+    EndPageContent(finalY, origin.y, &state->heightOscillator);
 }
