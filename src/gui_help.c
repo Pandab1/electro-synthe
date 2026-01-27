@@ -1,7 +1,38 @@
+#include <stdio.h>
+#include <string.h>
 #include "raylib.h"
 #include "../include/gui_components.h"
 #include "../include/gui_interface.h"
 #include "../include/gui_help.h"
+#include "../include/raygui.h"
+
+// Helper function to handle composed labels (e.g. "A / B" or "#12# / #13#")
+static void DrawMultiLabel(Rectangle bounds, const char *text) {
+    const char *sep = " / ";
+    const char *found = strstr(text, sep);
+
+    if (found) {
+        // Split detected
+        int len1 = (int)(found - text);
+        char part1[64] = {0};
+        if (len1 < 64) strncpy(part1, text, len1);
+
+        const char *part2 = found + strlen(sep);
+
+        // Divide space into 3 parts (Item1, Separator, Item2)
+        float w3 = bounds.width / 3.0f;
+        Rectangle r1 = { bounds.x, bounds.y, w3, bounds.height };
+        Rectangle r2 = { bounds.x + w3, bounds.y, w3, bounds.height };
+        Rectangle r3 = { bounds.x + 2*w3, bounds.y, w3, bounds.height };
+
+        GuiLabel(r1, part1);
+        GuiLabel(r2, "/");
+        GuiLabel(r3, part2);
+    } else {
+        // Standard single label
+        GuiLabel(bounds, text);
+    }
+}
 
 static void DrawHelpCard(int x, int y, int w, int h, float dpi, const char *key, const char *desc) {
     Rectangle r = { (float)x, (float)y, (float)w, (float)h };
@@ -13,12 +44,23 @@ static void DrawHelpCard(int x, int y, int w, int h, float dpi, const char *key,
     int keyWidth = MeasureText(key, fontSizeKey) + (int)(16 * dpi);
     if (keyWidth < (int)(60 * dpi)) keyWidth = (int)(60 * dpi);
 
+    // If text contains icons explicitly or is long, ensure enough width
+    if (strstr(key, " / ")) keyWidth += (int)(20 * dpi);
+
     Rectangle keyRect = { (float)x + keyPadding, (float)y + keyPadding, (float)keyWidth, (float)h - (keyPadding * 2) };
     DrawRectangleRec(keyRect, (Color){210, 210, 210, 255});
     DrawRectangleLinesEx(keyRect, 1, (Color){160, 160, 160, 255});
 
-    DrawText(key, (int)(keyRect.x + keyRect.width/2 - MeasureText(key, fontSizeKey)/2),
-             (int)(keyRect.y + keyRect.height/2 - fontSizeKey/2), fontSizeKey, DARKGRAY);
+    // Use GuiLabel to support icons like #118#
+    int prevAlign = GuiGetStyle(LABEL, TEXT_ALIGNMENT);
+    int prevSize = GuiGetStyle(DEFAULT, TEXT_SIZE);
+    GuiSetStyle(LABEL, TEXT_ALIGNMENT, TEXT_ALIGN_CENTER);
+    GuiSetStyle(DEFAULT, TEXT_SIZE, fontSizeKey);
+
+    DrawMultiLabel(keyRect, key);
+
+    GuiSetStyle(LABEL, TEXT_ALIGNMENT, prevAlign);
+    GuiSetStyle(DEFAULT, TEXT_SIZE, prevSize);
 
     int fontSizeDesc = (int)(10 * dpi);
     DrawText(desc, (int)(keyRect.x + keyRect.width + 12 * dpi),
@@ -61,11 +103,16 @@ void DrawHelpPage(AppState *state, int zoneX) {
     DrawHelpCard(x + colW + gap, (int)y, colW, cardH, dpi, "ECHAP", "Quitter");
     y += cardH + gap;
 
-    DrawHelpCard(x, (int)y, colW, cardH, dpi, "HAUT/BAS", "Volume +/-");
-    DrawHelpCard(x + colW + gap, (int)y, colW, cardH, dpi, "SHIFT + / SHIFT-", "Freq +/-");
+    char volKeys[32];
+    snprintf(volKeys, sizeof(volKeys), "#%d# / #%d#", ICON_ARROW_UP_FILL, ICON_ARROW_DOWN_FILL);
+    DrawHelpCard(x, (int)y, colW, cardH, dpi, volKeys, "Volume +/-");
+
+    DrawHelpCard(x + colW + gap, (int)y, colW, cardH, dpi, "+ / -", "Freq +/-");
     y += cardH + gap;
 
-    DrawHelpCard(x, (int)y, colW, cardH, dpi, "G / D", "Changer d'onde");
+    char arrowKeys[32];
+    snprintf(arrowKeys, sizeof(arrowKeys), "#%d# / #%d#", ICON_ARROW_LEFT_FILL, ICON_ARROW_RIGHT_FILL);
+    DrawHelpCard(x, (int)y, colW, cardH, dpi, arrowKeys, "Changer d'onde");
     DrawHelpCard(x + colW + gap, (int)y, colW, cardH, dpi, "SHIFT", "Mode playback");
     y += cardH + 35 * dpi;
 

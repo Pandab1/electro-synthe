@@ -23,10 +23,10 @@ void DrawPianoPage(AppState *state, int zoneX)
     DrawText("Q W E R T Y U  -> Do Re Mi Fa Sol La Si", x, y, (int)(16*dpi), DARKGRAY);
     y += (int)(25*dpi);
 
-    DrawText("Clic souris sur les touches = joue la note (mono)", x, y, (int)(16*dpi), DARKGRAY);
+    DrawText("Clic souris ou clavier sur les touches = joue la note", x, y, (int)(16*dpi), DARKGRAY);
     y += (int)(30*dpi);
 
-    // Clavier (C4 -> B4) : 7 touches blanches
+    // Keyboard (C4 -> B4) : 7 white keys
     int keyW = (int)(60*dpi);
     int keyH = (int)(180*dpi);
 
@@ -36,9 +36,11 @@ void DrawPianoPage(AppState *state, int zoneX)
     const int whiteMidi[7] = {60, 62, 64, 65, 67, 69, 71}; // C4 D4 E4 F4 G4 A4 B4
     const char *whiteLabel[7] = {"Do", "Re", "Mi", "Fa", "Sol", "La", "Si"};
     const char *whiteKeyChar[7] = {"Q", "W", "E", "R", "T", "Y", "U"};
+    const int whiteKeyCodes[7] = {KEY_Q, KEY_W, KEY_E, KEY_R, KEY_T, KEY_Y, KEY_U};
 
     Vector2 mouse = GetMousePosition();
     bool mouseDown = IsMouseButtonDown(MOUSE_LEFT_BUTTON);
+    bool anyNoteTriggered = false;
 
     for (int i = 0; i < 7; i++) {
         Rectangle wr = {
@@ -49,10 +51,17 @@ void DrawPianoPage(AppState *state, int zoneX)
         };
 
         bool hover = CheckCollisionPointRec(mouse, wr);
+        bool keyPressed = IsKeyDown(whiteKeyCodes[i]);
+        bool active = (hover && mouseDown) || keyPressed;
 
-        DrawRectangleRec(wr, RAYWHITE);
+        if (active) {
+             DrawRectangleRec(wr, (Color){200, 200, 200, 255}); // Darken when pressed
+        } else {
+             DrawRectangleRec(wr, RAYWHITE);
+        }
+
         DrawRectangleLinesEx(wr, 2, (Color){120,120,120,255});
-        if (hover) DrawRectangleLinesEx(wr, 3, (Color){90,140,180,255});
+        if (hover && !active) DrawRectangleLinesEx(wr, 3, (Color){90,140,180,255});
 
         // Label note (Do, Re, Mi...)
         int fs1 = (int)(16*dpi);
@@ -68,15 +77,17 @@ void DrawPianoPage(AppState *state, int zoneX)
                  (int)(wr.y + wr.height - fs1 - fs2 - 16),
                  fs2, GRAY);
 
-        // Clic = joue la note
-        if (hover && mouseDown) {
+        // Clic or Key = play note
+        if (active) {
             state->frequencyHz = NoteToFreq(whiteMidi[i]);
-            state->playback = true;
-            state->audioActive = true;
+            anyNoteTriggered = true;
         }
     }
 
-    if (IsMouseButtonReleased(MOUSE_LEFT_BUTTON)) {
+    if (anyNoteTriggered) {
+        state->playback = true;
+        state->audioActive = true;
+    } else {
         state->playback = false;
     }
 
