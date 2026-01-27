@@ -1,4 +1,4 @@
-#include "../include/gui_interface.h"
+#include "gui_interface.h"
 #define RAYGUI_IMPLEMENTATION
-#include "../include/raygui.h"
+#include "raygui.h"
 

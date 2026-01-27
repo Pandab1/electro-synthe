@@ -1,6 +1,6 @@
 #include "raylib.h"
-#include "../include/gui_interface.h"
-#include "../include/gui_output.h"
+#include "gui_interface.h"
+#include "gui_output.h"
 
 #include <math.h>
 #include <stdio.h>

@@ -2,8 +2,8 @@
 #include "utils_files.h"
 #include "utils_maths.h"
 #include "raylib.h"
-#include "../include/gui_interface.h"
-#include "../include/input.h"
+#include "gui_interface.h"
+#include "input.h"
 
 
 #include <stdio.h>

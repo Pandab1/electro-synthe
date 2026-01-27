@@ -1,6 +1,6 @@
 #include "raylib.h"
-#include "../include/raygui.h"
-#include "../include/gui_piano.h"
+#include "raygui.h"
+#include "gui_piano.h"
 #include <math.h>
 
 static float NoteToFreq(int midiNote)

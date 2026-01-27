@@ -1,9 +1,9 @@
 #include "raylib.h"
 #include <stdio.h>
 
-#include "../include/raygui.h"
-#include "../include/gui_interface.h"
-#include "../include/gui_components.h"
+#include "raygui.h"
+#include "gui_interface.h"
+#include "gui_components.h"
 
 // Helper: clamp
 static float ClampF(float v, float mn, float mx)

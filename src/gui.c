@@ -2,18 +2,18 @@
 #include <stdlib.h>
 
 
-#include "../include/gui_oscillator.h"
-#include "../include/gui_output.h"
-#include "../include/gui_help.h"
+#include "gui_oscillator.h"
+#include "gui_output.h"
+#include "gui_help.h"
 
-#include "../include/gui_interface.h"
-#include "../include/gui_components.h"
-#include "../include/gui_oscillator.h"
-#include "../include/gui_envelope.h"
-#include "../include/gui_piano.h"
+#include "gui_interface.h"
+#include "gui_components.h"
+#include "gui_oscillator.h"
+#include "gui_envelope.h"
+#include "gui_piano.h"
 
 
-#include "../include/raygui.h"
+#include "raygui.h"
 
 /* ----------------- Utils ----------------- */
 

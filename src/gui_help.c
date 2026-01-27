@@ -1,10 +1,10 @@
 #include <stdio.h>
 #include <string.h>
 #include "raylib.h"
-#include "../include/gui_components.h"
-#include "../include/gui_interface.h"
-#include "../include/gui_help.h"
-#include "../include/raygui.h"
+#include "gui_components.h"
+#include "gui_interface.h"
+#include "gui_help.h"
+#include "raygui.h"
 
 // Helper function to handle composed labels (e.g. "A / B" or "#12# / #13#")
 static void DrawMultiLabel(Rectangle bounds, const char *text) {

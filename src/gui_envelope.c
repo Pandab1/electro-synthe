@@ -1,8 +1,8 @@
 #include "raylib.h"
 
-#include "../include/gui_interface.h"
-#include "../include/gui_components.h"
-#include "../include/gui_envelope.h"
+#include "gui_interface.h"
+#include "gui_components.h"
+#include "gui_envelope.h"
 
 // Internal function to draw the envelope visualization
 static void DrawADSRVisualization(AppState *state, Rectangle zone)

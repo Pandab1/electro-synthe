@@ -1,5 +1,5 @@
 #include "raylib.h"
-#include "../include/input.h"
+#include "input.h"
 
 #include <math.h>
 
