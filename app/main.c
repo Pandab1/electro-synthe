@@ -1,10 +1,9 @@
 #include "custom_math.h"
-#include "utils_files.h"
-#include "utils_maths.h"
-#include "raylib.h"
 #include "gui_interface.h"
 #include "input.h"
-
+#include "raylib.h"
+#include "utils_files.h"
+#include "utils_maths.h"
 
 #include <stdio.h>
 
@@ -30,18 +29,15 @@ int main(void) {
   SetTargetFPS(60);
 
   // Init state
-  AppState myState = {
-    .showMessage = false,
-    .darkMode = false,
-    .sliderValue = 50.0f,
-    .playbackMode = MODE_CONTINUOUS
-  };
+  AppState myState = {.showMessage = false,
+                      .darkMode = false,
+                      .sliderValue = 50.0f,
+                      .playbackMode = MODE_CONTINUOUS};
 
   InitGuiStyle();
 
-  while (!WindowShouldClose())
-  {
-    HandleKeyboardShortcuts(&myState); 
+  while (!WindowShouldClose()) {
+    HandleKeyboardShortcuts(&myState);
 
     BeginDrawing();
     // gui.c
@@ -57,9 +53,9 @@ int main(void) {
   FILE *f_tri = fopen("tri.wav", "wb");
 
   struct Notes notes[] = {
-    {392, 60.0f / 76}, {440, 60.0f / 76}, {294, 60.0f / 114},
-    {440, 60.0f / 76}, {494, 60.0f / 76},
-};
+      {392, 60.0f / 76}, {440, 60.0f / 76}, {294, 60.0f / 114},
+      {440, 60.0f / 76}, {494, 60.0f / 76},
+  };
 
   u32 num_notes = sizeof(notes) / sizeof(notes[0]);
 
@@ -100,18 +96,18 @@ void generate_sound(FILE *f, u32 num_sample, u32 num_notes,
 
     if (cur_note < num_notes) {
       switch (type) {
-        case SIN:
-          y = generate_sin(t, notes[cur_note].freq);
-          break;
-        case SQU:
-          y = generate_square(t, notes[cur_note].freq);
-          break;
-        case ST:
-          y = generate_sawtooth(t, notes[cur_note].freq);
-          break;
-        case TRI:
-          y = generate_triangle(t, notes[cur_note].freq);
-          break;
+      case SIN:
+        y = generate_sin(t, notes[cur_note].freq);
+        break;
+      case SQU:
+        y = generate_square(t, notes[cur_note].freq);
+        break;
+      case ST:
+        y = generate_sawtooth(t, notes[cur_note].freq);
+        break;
+      case TRI:
+        y = generate_triangle(t, notes[cur_note].freq);
+        break;
       }
 
       if (t > cur_note_start + notes[cur_note].dur) {

@@ -4,4 +4,3 @@
 
 void DrawOutputPage(AppState *state, int zoneX);
 #endif
-
