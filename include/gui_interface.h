@@ -10,7 +10,8 @@ typedef enum PageApp {
     PAGE_OSCILLATOR = 0,
     PAGE_ENVELOPE  = 1,
     PAGE_OUTPUT     = 2,
-    PAGE_HELP       = 3
+    PAGE_HELP       = 3,
+    PAGE_PIANO      = 4
 } PageApp;
 
 // Waveforms (oscillator)
