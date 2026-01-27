@@ -18,40 +18,7 @@ struct Notes {
 enum WaveType { SIN, SQU, ST, TRI };
 
 void generate_sound(FILE *f, u32 num_sample, u32 num_notes,
-                    struct Notes notes[], enum WaveType type) {
-  u32 cur_note = 0;
-  float cur_note_start = 0.0f;
-  for (u32 i = 0; i < num_sample; i++) {
-    float t = (float)i / FREQ;
-
-    float y = 0.0f;
-
-    if (cur_note < num_notes) {
-      switch (type) {
-        case SIN:
-          y = generate_sin(t, notes[cur_note].freq);
-          break;
-        case SQU:
-          y = generate_square(t, notes[cur_note].freq);
-          break;
-        case ST:
-          y = generate_sawtooth(t, notes[cur_note].freq);
-          break;
-        case TRI:
-          y = generate_triangle(t, notes[cur_note].freq);
-          break;
-      }
-
-      if (t > cur_note_start + notes[cur_note].dur) {
-        cur_note++;
-        cur_note_start = t;
-      }
-    }
-    i16 sample = (i16)(y * INT16_MAX);
-
-    write_le_16(f, sample);
-  }
-}
+                    struct Notes notes[], enum WaveType type);
 
 int main(void) {
   const int screenWidth = 1000;
@@ -120,4 +87,40 @@ int main(void) {
   fclose(f_tri);
 
   return 0;
+}
+
+void generate_sound(FILE *f, u32 num_sample, u32 num_notes,
+                    struct Notes notes[], enum WaveType type) {
+  u32 cur_note = 0;
+  float cur_note_start = 0.0f;
+  for (u32 i = 0; i < num_sample; i++) {
+    float t = (float)i / FREQ;
+
+    float y = 0.0f;
+
+    if (cur_note < num_notes) {
+      switch (type) {
+        case SIN:
+          y = generate_sin(t, notes[cur_note].freq);
+          break;
+        case SQU:
+          y = generate_square(t, notes[cur_note].freq);
+          break;
+        case ST:
+          y = generate_sawtooth(t, notes[cur_note].freq);
+          break;
+        case TRI:
+          y = generate_triangle(t, notes[cur_note].freq);
+          break;
+      }
+
+      if (t > cur_note_start + notes[cur_note].dur) {
+        cur_note++;
+        cur_note_start = t;
+      }
+    }
+    i16 sample = (i16)(y * INT16_MAX);
+
+    write_le_16(f, sample);
+  }
 }
