@@ -3,3 +3,10 @@ executable('base_project_app',
   dependencies: [libbase_project_dep, mathlib_dep],
   install: true
 )
+
+executable('xd',
+  sources: ['gui_test.c'],
+  include_directories: inc,
+  dependencies: [miniaudio_dep, mathlib_dep, raylib_dep, libdsp_project_dep],
+  install: true
+)
