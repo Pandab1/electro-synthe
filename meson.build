@@ -59,7 +59,7 @@ if host_machine.system() == 'linux'
   raylib_dep = declare_dependency(
     dependencies: [
       raylib_dep,
-      # dependency('glfw3')
+      dependency('glfw3')
     ]
   )
 endif
