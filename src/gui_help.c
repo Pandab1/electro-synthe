@@ -56,7 +56,7 @@ void DrawHelpPage(AppState *state, int zoneX) {
     y += cardH + gap;
 
     DrawHelpCard(x, (int)y, colW, cardH, dpi, "G / D", "Changer d'onde");
-    DrawHelpCard(x + colW + gap, (int)y, colW, cardH, dpi, "SHIFT", "Mode Lecture");
+    DrawHelpCard(x + colW + gap, (int)y, colW, cardH, dpi, "SHIFT", "Mode playback");
     y += cardH + 35 * dpi;
 
 

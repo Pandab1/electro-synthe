@@ -10,6 +10,7 @@
 #include "../include/gui_components.h"
 #include "../include/gui_oscillator.h"
 #include "../include/gui_envelope.h"
+#include "../include/gui_piano.h"
 
 
 #include "../include/raygui.h"
@@ -75,6 +76,7 @@ static void DrawSidebar(AppState *state)
     DrawMenuButton(state, "#124#Envelope" /*ICON_WAVE*/,  PAGE_ENVELOPE,  x, y, w, h); y += h + s;
     DrawMenuButton(state, "#122#Output" /*ICON_AUDIO*/,     PAGE_OUTPUT,     x, y, w, h); y += h + s;
     DrawMenuButton(state, "#193#Help" /*ICON_HELP*/,       PAGE_HELP,       x, y, w, h); y += h + s;
+    DrawMenuButton(state, "#150#Piano", PAGE_PIANO, x, y, w, h); y += h + s;
 
 
     // Audio engine block (at bottom)
@@ -133,7 +135,7 @@ static void DrawSidebar(AppState *state)
     // ==========================
     y += (int)(btn.height + 15*dpi);
 
-    DrawText("MODE LECTURE", x + (int)(10*dpi), y, (int)(14*dpi), GRAY);
+    DrawText("MODE playback", x + (int)(10*dpi), y, (int)(14*dpi), GRAY);
     y += (int)(20*dpi);
 
     Rectangle btnMode = {
@@ -244,6 +246,9 @@ void DrawAppInterface(AppState *state)
             break;
         case PAGE_HELP:
             DrawHelpPage(state, zoneX);
+            break;
+        case PAGE_PIANO:                      
+            DrawPianoPage(state, zoneX);   
             break;
         default:
             break;
