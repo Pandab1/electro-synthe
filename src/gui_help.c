@@ -5,8 +5,8 @@
 
 static void DrawHelpCard(int x, int y, int w, int h, float dpi, const char *key, const char *desc) {
     Rectangle r = { (float)x, (float)y, (float)w, (float)h };
-    DrawRectangleRec(r, (Color){240, 240, 240, 255});
-    DrawRectangleLinesEx(r, 1, (Color){190, 190, 190, 255});
+    DrawRectangleRec(r, (Color){235, 235, 235, 255});
+    DrawRectangleLinesEx(r, 2, (Color){160, 160, 160, 255});
 
     int keyPadding = (int)(8 * dpi);
     int fontSizeKey = (int)(11 * dpi);
@@ -23,6 +23,16 @@ static void DrawHelpCard(int x, int y, int w, int h, float dpi, const char *key,
     int fontSizeDesc = (int)(10 * dpi);
     DrawText(desc, (int)(keyRect.x + keyRect.width + 12 * dpi),
              (int)(y + h/2 - fontSizeDesc/2), fontSizeDesc, GRAY);
+}
+
+static void DrawHelpDetailCard(int x, int y, int w, int h, float dpi, const char *title, const char *desc)
+{
+    Rectangle r = { (float)x, (float)y, (float)w, (float)h };
+    DrawRectangleRec(r, (Color){235,235,235,255});
+    DrawRectangleLinesEx(r, 2, (Color){160,160,160,255});
+
+    DrawText(title, x + (int)(12*dpi), y + (int)(10*dpi), (int)(14*dpi), GRAY);
+    DrawText(desc, x + (int)(12*dpi), y + (int)(32*dpi), (int)(12*dpi), BLACK);
 }
 
 void DrawHelpPage(AppState *state, int zoneX) {
@@ -48,11 +58,11 @@ void DrawHelpPage(AppState *state, int zoneX) {
     int colW = (usefulWidth - gap) / 2;
 
     DrawHelpCard(x, (int)y, colW, cardH, dpi, "ESPACE", "Play / Stop");
-    DrawHelpCard(x + colW + gap, (int)y, colW, cardH, dpi, "Q", "Quitter");
+    DrawHelpCard(x + colW + gap, (int)y, colW, cardH, dpi, "ECHAP", "Quitter");
     y += cardH + gap;
 
     DrawHelpCard(x, (int)y, colW, cardH, dpi, "HAUT/BAS", "Volume +/-");
-    DrawHelpCard(x + colW + gap, (int)y, colW, cardH, dpi, "+ / -", "Freq +/-");
+    DrawHelpCard(x + colW + gap, (int)y, colW, cardH, dpi, "SHIFT + / SHIFT-", "Freq +/-");
     y += cardH + gap;
 
     DrawHelpCard(x, (int)y, colW, cardH, dpi, "G / D", "Changer d'onde");
@@ -66,9 +76,11 @@ void DrawHelpPage(AppState *state, int zoneX) {
     const char *ondesT[] = {"Sinus", "Carree", "Triangle", "Sawtooth"};
     const char *ondesD[] = {"Onde pure sans harmoniques", "Contient uniquement les harmoniques impaires.", "Harmoniques impaires avec décroissance rapide.", "Contient toutes les harmoniques."};
 
+    int detailH = (int)(60 * dpi);
+
     for(int i = 0; i < 4; i++) {
-        DrawHelpCard(x, (int)y, usefulWidth, cardH, dpi, ondesT[i], ondesD[i]);
-        y += cardH + (int)(5 * dpi);
+        DrawHelpDetailCard(x, (int)y, usefulWidth, detailH, dpi, ondesT[i], ondesD[i]);
+        y += detailH + (int)(5 * dpi);
     }
     y += 30 * dpi;
 
@@ -76,18 +88,15 @@ void DrawHelpPage(AppState *state, int zoneX) {
     DrawText("ENVELOPPE ADSR", x, (int)y, (int)(13 * dpi), GRAY);
     y += 25 * dpi;
 
-
-
     const char *adsrT[] = {"Attack", "Decay", "Sustain", "Release"};
     const char *adsrD[] = {"Durée pour passer du silence au volume maximum.", "Durée pour descendre du pic au niveau de sustain.", "Niveau maintenu tant que la note est jouée. ", "Durée pour revenir au silence après le relâchement."};
 
     for(int i = 0; i < 4; i++) {
-        DrawHelpCard(x, (int)y, usefulWidth, cardH, dpi, adsrT[i], adsrD[i]);
-        y += cardH + (int)(5 * dpi);
+        DrawHelpDetailCard(x, (int)y, usefulWidth, detailH, dpi, adsrT[i], adsrD[i]);
+        y += detailH + (int)(5 * dpi);
     }
     y += 35 * dpi;
 
-    // --- 5. FOOTER ---
     Rectangle infoBox = { (float)x, y, (float)usefulWidth, (float)(60 * dpi) };
     DrawRectangleRec(infoBox, (Color){230, 240, 250, 255});
     DrawText("raylib - www.raylib.com & raygui - github.com/raysan5/raygui", (int)infoBox.x + 15, (int)infoBox.y + 22, (int)(11 * dpi), DARKGRAY);

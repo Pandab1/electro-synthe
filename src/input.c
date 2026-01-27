@@ -53,7 +53,7 @@ void HandleKeyboardShortcuts(AppState *state)
 
     if (state->currentPage == PAGE_PIANO) {
 
-    // Blanches: A Z E R T Y U -> C D E F G A B (C4..B4)
+    // Blanches: Q W E R T Y U -> C D E F G A B (C4..B4)
     if (PianoKeyPressed(KEY_A)) { state->frequencyHz = NoteToFreq(60); state->playback = true; state->audioActive = true; }
     if (PianoKeyPressed(KEY_Z)) { state->frequencyHz = NoteToFreq(62); state->playback = true; state->audioActive = true; }
     if (PianoKeyPressed(KEY_E)) { state->frequencyHz = NoteToFreq(64); state->playback = true; state->audioActive = true; }
