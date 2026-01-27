@@ -1,3 +1,4 @@
+#define _USE_MATH_DEFINES
 #include "custom_math.h"
 #include <math.h>
 
