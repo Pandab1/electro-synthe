@@ -1,6 +1,8 @@
 #include "raylib.h"
 #include "../include/input.h"
 
+#include <math.h>
+
 static Waveform NextWave(Waveform w) {
     return (Waveform)((w + 1) % 4);
 }
@@ -18,8 +20,8 @@ static bool PianoKeyReleased(int key){ return IsKeyReleased(key); }
 
 void HandleKeyboardShortcuts(AppState *state)
 {
-    // ESC / Q : quit
-    if (IsKeyPressed(KEY_Q)) {
+    // ESC : quit
+    if (IsKeyPressed(KEY_ESCAPE)) {
         CloseWindow(); 
     }
     // Play/Stop
