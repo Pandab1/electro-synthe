@@ -20,7 +20,7 @@ void DrawPianoPage(AppState *state, int zoneX)
     DrawText("Clavier:", x, y, (int)(18*dpi), GRAY);
     y += (int)(30*dpi);
 
-    DrawText("Q Z E R T Y U  -> Do Re Mi Fa Sol La Si", x, y, (int)(16*dpi), DARKGRAY);
+    DrawText("Q W E R T Y U  -> Do Re Mi Fa Sol La Si", x, y, (int)(16*dpi), DARKGRAY);
     y += (int)(25*dpi);
 
     DrawText("Clic souris sur les touches = joue la note (mono)", x, y, (int)(16*dpi), DARKGRAY);
@@ -35,7 +35,7 @@ void DrawPianoPage(AppState *state, int zoneX)
 
     const int whiteMidi[7] = {60, 62, 64, 65, 67, 69, 71}; // C4 D4 E4 F4 G4 A4 B4
     const char *whiteLabel[7] = {"Do", "Re", "Mi", "Fa", "Sol", "La", "Si"};
-    const char *whiteKeyChar[7] = {"Q", "Z", "E", "R", "T", "Y", "U"};
+    const char *whiteKeyChar[7] = {"Q", "W", "E", "R", "T", "Y", "U"};
 
     Vector2 mouse = GetMousePosition();
     bool mouseDown = IsMouseButtonDown(MOUSE_LEFT_BUTTON);
@@ -61,7 +61,7 @@ void DrawPianoPage(AppState *state, int zoneX)
                  (int)(wr.y + wr.height - fs1 - 10),
                  fs1, DARKGRAY);
 
-        // Label touche clavier (A, Z, E...)
+        // Label touche clavier Q W E R T Y U
         int fs2 = (int)(14*dpi);
         DrawText(whiteKeyChar[i],
                  (int)(wr.x + wr.width/2 - MeasureText(whiteKeyChar[i], fs2)/2),
