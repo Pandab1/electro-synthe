@@ -1,7 +1,11 @@
 #include "custom_math.h"
 #include "utils_files.h"
 #include "utils_maths.h"
-#include <stdint.h>
+#include "raylib.h"
+#include "gui_interface.h"
+#include "input.h"
+
+
 #include <stdio.h>
 
 #define FREQ 44100
@@ -17,15 +21,45 @@ void generate_sound(FILE *f, u32 num_sample, u32 num_notes,
                     struct Notes notes[], enum WaveType type);
 
 int main(void) {
+  const int screenWidth = 1000;
+  const int screenHeight = 800;
+
+  SetConfigFlags(FLAG_WINDOW_RESIZABLE);
+  InitWindow(screenWidth, screenHeight, "Electro-synthé");
+  SetWindowMinSize(780, 600);
+  SetTargetFPS(60);
+
+  // Init state
+  AppState myState = {
+    .showMessage = false,
+    .darkMode = false,
+    .sliderValue = 50.0f,
+    .playbackMode = MODE_CONTINUOUS
+  };
+
+  InitGuiStyle();
+
+  while (!WindowShouldClose())
+  {
+    HandleKeyboardShortcuts(&myState); 
+
+    BeginDrawing();
+    // gui.c
+    DrawAppInterface(&myState);
+    EndDrawing();
+  }
+  CloseWindow();
+  return 0;
+
   FILE *f_sin = fopen("sin.wav", "wb");
   FILE *f_squ = fopen("squ.wav", "wb");
   FILE *f_st = fopen("st.wav", "wb");
   FILE *f_tri = fopen("tri.wav", "wb");
 
   struct Notes notes[] = {
-      {392, 60.0f / 76}, {440, 60.0f / 76}, {294, 60.0f / 114},
-      {440, 60.0f / 76}, {494, 60.0f / 76},
-  };
+    {392, 60.0f / 76}, {440, 60.0f / 76}, {294, 60.0f / 114},
+    {440, 60.0f / 76}, {494, 60.0f / 76},
+};
 
   u32 num_notes = sizeof(notes) / sizeof(notes[0]);
 
@@ -66,18 +100,18 @@ void generate_sound(FILE *f, u32 num_sample, u32 num_notes,
 
     if (cur_note < num_notes) {
       switch (type) {
-      case SIN:
-        y = generate_sin(t, notes[cur_note].freq);
-        break;
-      case SQU:
-        y = generate_square(t, notes[cur_note].freq);
-        break;
-      case ST:
-        y = generate_sawtooth(t, notes[cur_note].freq);
-        break;
-      case TRI:
-        y = generate_triangle(t, notes[cur_note].freq);
-        break;
+        case SIN:
+          y = generate_sin(t, notes[cur_note].freq);
+          break;
+        case SQU:
+          y = generate_square(t, notes[cur_note].freq);
+          break;
+        case ST:
+          y = generate_sawtooth(t, notes[cur_note].freq);
+          break;
+        case TRI:
+          y = generate_triangle(t, notes[cur_note].freq);
+          break;
       }
 
       if (t > cur_note_start + notes[cur_note].dur) {
