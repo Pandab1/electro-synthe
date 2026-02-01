@@ -3,7 +3,7 @@
 
 #include "dsp_config.h"
 
-typedef enum { WAVE_SINE, WAVE_SQUARE, WAVE_SAW, WAVE_TRIANGLE } Waveform;
+typedef enum { WAVE_SINE, WAVE_SQUARE, WAVE_SAWTOOTH, WAVE_TRIANGLE } Waveform;
 
 typedef struct {
   float phase;

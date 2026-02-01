@@ -24,7 +24,7 @@ typedef struct {
   EnvStage stage;
 } ADSR;
 
-typedef enum { WAVE_SINE, WAVE_SQUARE, WAVE_SAW, WAVE_TRIANGLE } Waveform;
+typedef enum { WAVE_SINE, WAVE_SQUARE, WAVE_SAWTOOTH, WAVE_TRIANGLE } Waveform;
 
 typedef struct {
   float phase;
@@ -53,7 +53,7 @@ void voice_init() {
     voices[i].osc.phase = 0.0f;
     voices[i].osc.freq = 0.0f;
     voices[i].osc.sampleRate = SAMPLE_RATE;
-    voices[i].osc.waveform = WAVE_SAW;
+    voices[i].osc.waveform = WAVE_SAWTOOTH;
     voices[i].env = env; // copy default ADSR
     voices[i].active = 0;
   }
@@ -186,7 +186,7 @@ float osc_next_sample(Oscillator *o) {
   case WAVE_SQUARE:
     return (o->phase < 0.5f) ? 1.0f : -1.0f;
 
-  case WAVE_SAW:
+  case WAVE_SAWTOOTH:
     return 2.0f * o->phase - 1.0f;
 
   case WAVE_TRIANGLE:

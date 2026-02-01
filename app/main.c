@@ -4,6 +4,8 @@
 #include "raylib.h"
 #include "utils_files.h"
 #include "utils_maths.h"
+#include "miniaudio.h"
+#include "dsp_voice.h"
 
 #include <stdio.h>
 
@@ -19,7 +21,30 @@ enum WaveType { SIN, SQU, ST, TRI };
 void generate_sound(FILE *f, u32 num_sample, u32 num_notes,
                     struct Notes notes[], enum WaveType type);
 
+//MINIAUDIO CALLBACK
+void data_callback(ma_device *device, void *output, const void *input,
+                   ma_uint32 frameCount) {
+  float *out = (float *)output;
+  for (ma_uint32 i = 0; i < frameCount; i++)
+    out[i] = synth_next_sample();
+}
+
 int main(void) {
+  //DSP INIT
+  voice_init();
+  //MINIAUDIO INIT
+  ma_device_config config = ma_device_config_init(ma_device_type_playback);
+  config.playback.format = ma_format_f32;
+  config.playback.channels = 1;
+  config.sampleRate = SAMPLE_RATE;
+  config.dataCallback = data_callback;
+  // MINIAUDIO DEVICE
+  ma_device device;
+  if (ma_device_init(NULL, &config, &device) != MA_SUCCESS)
+    return -1;
+  if (ma_device_start(&device) != MA_SUCCESS)
+    return -1;
+
   const int screenWidth = 1000;
   const int screenHeight = 800;
 

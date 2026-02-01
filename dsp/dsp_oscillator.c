@@ -20,7 +20,7 @@ float osc_next_sample(Oscillator *o) {
   case WAVE_SQUARE:
     return (o->phase < 0.5f) ? 1.0f : -1.0f;
 
-  case WAVE_SAW:
+  case WAVE_SAWTOOTH:
     return 2.0f * o->phase - 1.0f;
 
   case WAVE_TRIANGLE:

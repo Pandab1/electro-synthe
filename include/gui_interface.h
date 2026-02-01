@@ -1,6 +1,7 @@
 #ifndef GUI_INTERFACE_H
 #define GUI_INTERFACE_H
 
+#include "dsp_oscillator.h"
 #include "raylib.h"
 #include <stdbool.h>
 
@@ -13,14 +14,6 @@ typedef enum PageApp {
   PAGE_HELP = 3,
   PAGE_PIANO = 4
 } PageApp;
-
-// Waveforms (oscillator)
-typedef enum Waveform {
-  WAVE_SINE = 0,
-  WAVE_SQUARE,
-  WAVE_TRIANGLE,
-  WAVE_SAWTOOTH
-} Waveform;
 
 typedef enum PlaybackMode { MODE_CONTINUOUS = 0, MODE_ENVELOPE } PlaybackMode;
 
