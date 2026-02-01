@@ -6,6 +6,8 @@
 #include "utils_maths.h"
 #include "miniaudio.h"
 #include "dsp_voice.h"
+#include "dsp_api.h"
+#include "dsp_adsr.h"
 
 #include <stdio.h>
 
@@ -62,6 +64,7 @@ int main(void) {
   InitGuiStyle();
 
   while (!WindowShouldClose()) {
+    AudioManager(&myState, &env);
     HandleKeyboardShortcuts(&myState);
 
     BeginDrawing();

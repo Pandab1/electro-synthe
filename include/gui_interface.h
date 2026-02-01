@@ -2,6 +2,7 @@
 #define GUI_INTERFACE_H
 
 #include "dsp_oscillator.h"
+#include "dsp_adsr.h"
 #include "raylib.h"
 #include <stdbool.h>
 
@@ -16,13 +17,6 @@ typedef enum PageApp {
 } PageApp;
 
 typedef enum PlaybackMode { MODE_CONTINUOUS = 0, MODE_ENVELOPE } PlaybackMode;
-
-typedef struct EnvelopeADSR {
-  float attack;
-  float decay;
-  float sustain;
-  float release;
-} EnvelopeADSR;
 
 // Global application state (UI + parameters)
 typedef struct AppState {
@@ -39,7 +33,7 @@ typedef struct AppState {
   bool playback;
   PlaybackMode playbackMode;
 
-  EnvelopeADSR adsr;
+  ADSR adsr;
   Vector2 scrollEnvelope;
   float heightEnvelope;
   Vector2 scrollOscillator;
