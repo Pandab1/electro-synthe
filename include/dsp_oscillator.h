@@ -1,7 +1,7 @@
-#ifndef OSCILLATOR_H
-#define OSCILLATOR_H
+#ifndef DSP_OSCILLATOR_H
+#define DSP_OSCILLATOR_H
 
-#include "config_dsp.h"
+#include "dsp_config.h"
 
 typedef enum { WAVE_SINE, WAVE_SQUARE, WAVE_SAW, WAVE_TRIANGLE } Waveform;
 

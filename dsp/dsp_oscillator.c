@@ -1,7 +1,7 @@
-#include "oscillator.h"
-#include "config_dsp.h"
-#include "utils_dsp.h"
-#include "voice.h"
+#include "dsp_oscillator.h"
+#include "dsp_config.h"
+#include "dsp_utils.h"
+#include "dsp_voice.h"
 #include <math.h>
 
 int visWriteIndex = 0;

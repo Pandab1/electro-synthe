@@ -1,5 +1,5 @@
-#include "adsr.h"
-#include "config_dsp.h"
+#include "dsp_adsr.h"
+#include "dsp_config.h"
 
 ADSR env = {.attack = 0.05f,
             .decay = 0.02f,

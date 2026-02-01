@@ -1,9 +1,9 @@
-#include "config_dsp.h"
+#include "dsp_config.h"
 #include "miniaudio.h"
-#include "oscillator.h"
+#include "dsp_oscillator.h"
 #include "raylib.h"
-#include "utils_dsp.h"
-#include "voice.h"
+#include "dsp_utils.h"
+#include "dsp_voice.h"
 #include <stdlib.h>
 
 typedef struct {

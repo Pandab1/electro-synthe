@@ -1,6 +1,6 @@
-#include "voice.h"
-#include "config_dsp.h"
-#include "oscillator.h"
+#include "dsp_voice.h"
+#include "dsp_config.h"
+#include "dsp_oscillator.h"
 #include <math.h>
 #include <stdio.h>
 

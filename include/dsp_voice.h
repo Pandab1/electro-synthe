@@ -1,8 +1,8 @@
-#ifndef VOICE_H
-#define VOICE_H
+#ifndef DSP_VOICE_H
+#define DSP_VOICE_H
 
-#include "adsr.h"
-#include "oscillator.h"
+#include "dsp_adsr.h"
+#include "dsp_oscillator.h"
 
 #define MAX_VOICES 8
 

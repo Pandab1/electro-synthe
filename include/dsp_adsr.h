@@ -1,5 +1,5 @@
-#ifndef ADSR_H
-#define ADSR_H
+#ifndef DSP_ADSR_H
+#define DSP_ADSR_H
 
 typedef enum {
   ENV_IDLE,
