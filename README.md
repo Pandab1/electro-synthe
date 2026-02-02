@@ -1,6 +1,6 @@
 # Électro-synthé - Junia ISEN AP3
 
-Projet de synthétiseur logiciel (générer des sons de synthèse numérique) 
+Projet de synthétiseur logiciel (générer des sons de synthèse numérique). Un rapport est présent dans RAPPORT.md
 
 
 ## Installation
