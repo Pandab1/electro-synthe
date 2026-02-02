@@ -33,6 +33,12 @@ static bool PianoKeyPressed(int key) { return IsKeyPressed(key); }
 static bool PianoKeyReleased(int key) { return IsKeyReleased(key); }
 
 void HandleKeyboardShortcuts(AppState *state) {
+  // dynamic playback mode
+  if (state->currentPage == PAGE_OSCILLATOR)
+    state->playbackMode = MODE_CONTINUOUS;
+  if (state->currentPage == PAGE_PIANO || state->currentPage == PAGE_ENVELOPE)
+    state->playbackMode = MODE_ENVELOPE;
+    
   // ESC : quit
   if (IsKeyPressed(KEY_ESCAPE)) {
     CloseWindow();
@@ -45,9 +51,9 @@ void HandleKeyboardShortcuts(AppState *state) {
 
   // Change waveform
   if (IsKeyPressed(KEY_RIGHT))
-    state->waveform = NextWave(state->waveform);
+    state->osc.waveform = NextWave(state->osc.waveform);
   if (IsKeyPressed(KEY_LEFT))
-    state->waveform = PrevWave(state->waveform);
+    state->osc.waveform = PrevWave(state->osc.waveform);
 
   // Volume
   if (IsKeyDown(KEY_UP))
@@ -65,13 +71,13 @@ void HandleKeyboardShortcuts(AppState *state) {
       IsKeyDown(KEY_LEFT_SHIFT) || IsKeyDown(KEY_RIGHT_SHIFT) ? 10.0f : 1.0f;
 
   if (IsKeyDown(KEY_KP_ADD) || IsKeyDown(KEY_EQUAL)) {
-    state->frequencyHz += step;
+    state->osc.freq += step;
   }
 
   if (IsKeyDown(KEY_KP_SUBTRACT) || IsKeyDown(KEY_MINUS) ||
       (IsKeyDown(KEY_SIX) &&
        (IsKeyDown(KEY_LEFT_SHIFT) || IsKeyDown(KEY_RIGHT_SHIFT)))) {
-    state->frequencyHz -= step;
+    state->osc.freq -= step;
   }
 
   if (state->currentPage == PAGE_PIANO) {

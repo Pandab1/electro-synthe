@@ -40,8 +40,8 @@ int main(void) {
   AppState myState = {.showMessage = false,
                       .darkMode = false,
                       .sliderValue = 50.0f,
-                      .playbackMode = MODE_CONTINUOUS, // continuous mode by default
-                      .adsr = env, // set default ADSR
+                      .playbackMode = g_continuous ? MODE_CONTINUOUS : MODE_ENVELOPE, // set default mode, see dsp_api.c
+                      .adsr = env, // set default ADSR, see dsp_adsr.c
                       .volume = g_volume, // set default global volume
                       .audioActive = true, // audio on by default
                     };

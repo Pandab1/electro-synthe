@@ -76,8 +76,8 @@ void DrawOutputPage(AppState *state, int zoneX) {
   char vWaveform[64], vFreq[64], vVol[64], vStatus[64];
 
   snprintf(vWaveform, sizeof(vWaveform), "%s",
-           GetWaveformName(state->waveform));
-  snprintf(vFreq, sizeof(vFreq), "%.0f Hz", state->frequencyHz);
+           GetWaveformName(state->osc.waveform));
+  snprintf(vFreq, sizeof(vFreq), "%.0f Hz", state->osc.freq);
   snprintf(vVol, sizeof(vVol), "%.0f %%", state->volume * 100.0f);
 
   const char *playbackTxt = state->playback ? "PLAY" : "STOP";

@@ -21,14 +21,11 @@ typedef struct AppState {
   bool darkMode;
   PageApp currentPage;
   bool audioActive;
-  float visualPhase;
-
-  Waveform waveform;
-
-  // Oscillator
-  float frequencyHz;
-  float volume;
   bool playback;
+  float visualPhase;
+  float volume;
+  
+  Oscillator osc;
   PlaybackMode playbackMode;
 
   ADSR adsr;

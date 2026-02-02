@@ -2,6 +2,7 @@
 #include "dsp_config.h"
 #include "dsp_utils.h"
 #include "dsp_voice.h"
+#include "dsp_api.h"
 #include <math.h>
 
 unsigned int visWriteIndex = 0; 
@@ -34,6 +35,11 @@ float osc_next_sample(Oscillator *o) {
 float synth_next_sample(void) {
   float mix = 0.0f;
 
+  if (g_continuous) {
+    mix += osc_next_sample(&g_osc) * 0.5f;
+    goto end_loop;
+  }
+
   for (int i = 0; i < MAX_VOICES; i++) {
     if (!voices[i].active)
       continue;
@@ -46,6 +52,7 @@ float synth_next_sample(void) {
     if (voices[i].env.stage == ENV_IDLE)
       voices[i].active = 0;
   }
+  end_loop:
   
   mix = soft_clip(mix);
 

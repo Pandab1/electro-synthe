@@ -5,6 +5,8 @@
 
 extern float g_volume;
 extern bool g_mute;
+extern bool g_continuous;
+extern Oscillator g_osc;
 
 void AudioManager(AppState *state);
 
