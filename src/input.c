@@ -1,7 +1,25 @@
 #include "input.h"
+#include "dsp_utils.h"
+#include "dsp_voice.h"
 #include "raylib.h"
 
 #include <math.h>
+
+typedef struct {
+  KeyboardKey key;
+  int midiNote;
+} KeyNote;
+
+KeyNote notes[] = {
+    {KEY_Q, 72}, // C5
+    {KEY_W, 74}, // D5
+    {KEY_E, 76}, // E5
+    {KEY_R, 77}, // F5
+    {KEY_T, 79}, // G5
+    {KEY_Y, 81}, // A5
+    {KEY_U, 83}, // B5
+    {KEY_I, 84}  // C6
+};
 
 static Waveform NextWave(Waveform w) { return (Waveform)((w + 1) % 4); }
 
@@ -15,6 +33,12 @@ static bool PianoKeyPressed(int key) { return IsKeyPressed(key); }
 static bool PianoKeyReleased(int key) { return IsKeyReleased(key); }
 
 void HandleKeyboardShortcuts(AppState *state) {
+  // dynamic playback mode
+  if (state->currentPage == PAGE_OSCILLATOR)
+    state->playbackMode = MODE_CONTINUOUS;
+  if (state->currentPage == PAGE_PIANO || state->currentPage == PAGE_ENVELOPE)
+    state->playbackMode = MODE_ENVELOPE;
+
   // ESC : quit
   if (IsKeyPressed(KEY_ESCAPE)) {
     CloseWindow();
@@ -27,9 +51,9 @@ void HandleKeyboardShortcuts(AppState *state) {
 
   // Change waveform
   if (IsKeyPressed(KEY_RIGHT))
-    state->waveform = NextWave(state->waveform);
+    state->osc.waveform = NextWave(state->osc.waveform);
   if (IsKeyPressed(KEY_LEFT))
-    state->waveform = PrevWave(state->waveform);
+    state->osc.waveform = PrevWave(state->osc.waveform);
 
   // Volume
   if (IsKeyDown(KEY_UP))
@@ -47,55 +71,27 @@ void HandleKeyboardShortcuts(AppState *state) {
       IsKeyDown(KEY_LEFT_SHIFT) || IsKeyDown(KEY_RIGHT_SHIFT) ? 10.0f : 1.0f;
 
   if (IsKeyDown(KEY_KP_ADD) || IsKeyDown(KEY_EQUAL)) {
-    state->frequencyHz += step;
+    state->osc.freq += step;
   }
 
   if (IsKeyDown(KEY_KP_SUBTRACT) || IsKeyDown(KEY_MINUS) ||
       (IsKeyDown(KEY_SIX) &&
        (IsKeyDown(KEY_LEFT_SHIFT) || IsKeyDown(KEY_RIGHT_SHIFT)))) {
-    state->frequencyHz -= step;
+    state->osc.freq -= step;
   }
 
   if (state->currentPage == PAGE_PIANO) {
 
-    // Blanches: Q W E R T Y U -> C D E F G A B (C4..B4)
-    if (PianoKeyPressed(KEY_A)) {
-      state->frequencyHz = NoteToFreq(60);
-      state->playback = true;
-      state->audioActive = true;
-    }
-    if (PianoKeyPressed(KEY_Z)) {
-      state->frequencyHz = NoteToFreq(62);
-      state->playback = true;
-      state->audioActive = true;
-    }
-    if (PianoKeyPressed(KEY_E)) {
-      state->frequencyHz = NoteToFreq(64);
-      state->playback = true;
-      state->audioActive = true;
-    }
-    if (PianoKeyPressed(KEY_R)) {
-      state->frequencyHz = NoteToFreq(65);
-      state->playback = true;
-      state->audioActive = true;
-    }
-    if (PianoKeyPressed(KEY_T)) {
-      state->frequencyHz = NoteToFreq(67);
-      state->playback = true;
-      state->audioActive = true;
-    }
-    if (PianoKeyPressed(KEY_Y)) {
-      state->frequencyHz = NoteToFreq(69);
-      state->playback = true;
-      state->audioActive = true;
-    }
-    if (PianoKeyPressed(KEY_U)) {
-      state->frequencyHz = NoteToFreq(71);
-      state->playback = true;
-      state->audioActive = true;
-    }
-    {
-      state->playback = false;
+    for (int i = 0; i < 8; i++) {
+      if (IsKeyPressed(notes[i].key)) {
+        note_on(notes[i].midiNote);
+        // state->playback = true;
+        // state->audioActive = true;
+      }
+      if (IsKeyReleased(notes[i].key)) {
+        note_off(notes[i].midiNote);
+        // state->playback = false;
+      }
     }
 
     return;

@@ -1,6 +1,8 @@
 #ifndef GUI_INTERFACE_H
 #define GUI_INTERFACE_H
 
+#include "dsp_adsr.h"
+#include "dsp_oscillator.h"
 #include "raylib.h"
 #include <stdbool.h>
 
@@ -14,39 +16,19 @@ typedef enum PageApp {
   PAGE_PIANO = 4
 } PageApp;
 
-// Waveforms (oscillator)
-typedef enum Waveform {
-  WAVE_SINE = 0,
-  WAVE_SQUARE,
-  WAVE_TRIANGLE,
-  WAVE_SAWTOOTH
-} Waveform;
-
-typedef enum PlaybackMode { MODE_CONTINUOUS = 0, MODE_ENVELOPE } PlaybackMode;
-
-typedef struct EnvelopeADSR {
-  float attack;
-  float decay;
-  float sustain;
-  float release;
-} EnvelopeADSR;
-
 // Global application state (UI + parameters)
 typedef struct AppState {
   bool darkMode;
   PageApp currentPage;
   bool audioActive;
-  float visualPhase;
-
-  Waveform waveform;
-
-  // Oscillator
-  float frequencyHz;
-  float volume;
   bool playback;
+  float visualPhase;
+  float volume;
+
+  Oscillator osc;
   PlaybackMode playbackMode;
 
-  EnvelopeADSR adsr;
+  ADSR adsr;
   Vector2 scrollEnvelope;
   float heightEnvelope;
   Vector2 scrollOscillator;
@@ -60,6 +42,9 @@ typedef struct AppState {
   bool showMessage;
   float sliderValue;
 } AppState;
+
+// // Global AppState
+// extern AppState myState;
 
 // GUI Functions
 void InitGuiStyle(void);

@@ -1,10 +1,11 @@
-#include "oscillator.h"
-#include "config_dsp.h"
-#include "utils_dsp.h"
-#include "voice.h"
+#include "dsp_oscillator.h"
+#include "dsp_api.h"
+#include "dsp_config.h"
+#include "dsp_utils.h"
+#include "dsp_voice.h"
 #include <math.h>
 
-int visWriteIndex = 0;
+unsigned int visWriteIndex = 0;
 float visBuffer[VIS_BUFFER_SIZE] = {0};
 
 // Returns the next sample from the oscillator
@@ -20,7 +21,7 @@ float osc_next_sample(Oscillator *o) {
   case WAVE_SQUARE:
     return (o->phase < 0.5f) ? 1.0f : -1.0f;
 
-  case WAVE_SAW:
+  case WAVE_SAWTOOTH:
     return 2.0f * o->phase - 1.0f;
 
   case WAVE_TRIANGLE:
@@ -34,6 +35,11 @@ float osc_next_sample(Oscillator *o) {
 float synth_next_sample(void) {
   float mix = 0.0f;
 
+  if (g_continuous) {
+    mix += osc_next_sample(&g_osc) * 0.5f;
+    goto end_loop;
+  }
+
   for (int i = 0; i < MAX_VOICES; i++) {
     if (!voices[i].active)
       continue;
@@ -42,14 +48,16 @@ float synth_next_sample(void) {
     float envValue = adsr_process(&voices[i].env);
 
     mix += oscSample * envValue;
-    mix = soft_clip(mix);
 
     if (voices[i].env.stage == ENV_IDLE)
       voices[i].active = 0;
   }
+end_loop:
 
-  int index = visWriteIndex++;
-  visBuffer[index % VIS_BUFFER_SIZE] = mix;
+  mix = soft_clip(mix);
+
+  visBuffer[visWriteIndex % VIS_BUFFER_SIZE] = mix;
+  visWriteIndex++;
 
   return mix;
 }

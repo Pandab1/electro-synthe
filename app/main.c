@@ -1,6 +1,10 @@
 #include "custom_math.h"
+#include "dsp_adsr.h"
+#include "dsp_api.h"
+#include "dsp_voice.h"
 #include "gui_interface.h"
 #include "input.h"
+#include "miniaudio.h"
 #include "raylib.h"
 #include "utils_files.h"
 #include "utils_maths.h"
@@ -19,7 +23,47 @@ enum WaveType { SIN, SQU, ST, TRI };
 void generate_sound(FILE *f, u32 num_sample, u32 num_notes,
                     struct Notes notes[], enum WaveType type);
 
+// MINIAUDIO CALLBACK
+void data_callback(ma_device *device, void *output, const void *input,
+                   ma_uint32 frameCount) {
+  float *out = (float *)output;
+  for (ma_uint32 i = 0; i < frameCount; i++) {
+    if (!g_mute)
+      out[i] =
+          synth_next_sample() * g_volume; // g_volume is controlled via the gui
+    else
+      out[i] = 0.0f;
+  }
+}
+
 int main(void) {
+  // INIT APPSTATE
+  AppState myState = {
+      .showMessage = false,
+      .darkMode = false,
+      .sliderValue = 50.0f,
+      .playbackMode = g_continuous
+                          ? MODE_CONTINUOUS
+                          : MODE_ENVELOPE, // set default mode, see dsp_api.c
+      .adsr = env,                         // set default ADSR, see dsp_adsr.c
+      .volume = g_volume,                  // set default global volume
+      .audioActive = true,                 // audio on by default
+  };
+  // DSP INIT
+  voice_init();
+  // MINIAUDIO INIT
+  ma_device_config config = ma_device_config_init(ma_device_type_playback);
+  config.playback.format = ma_format_f32;
+  config.playback.channels = 1;
+  config.sampleRate = SAMPLE_RATE;
+  config.dataCallback = data_callback;
+  // MINIAUDIO DEVICE
+  ma_device device;
+  if (ma_device_init(NULL, &config, &device) != MA_SUCCESS)
+    return -1;
+  if (ma_device_start(&device) != MA_SUCCESS)
+    return -1;
+
   const int screenWidth = 1000;
   const int screenHeight = 800;
 
@@ -28,17 +72,11 @@ int main(void) {
   SetWindowMinSize(780, 600);
   SetTargetFPS(60);
 
-  // Init state
-  AppState myState = {.showMessage = false,
-                      .darkMode = false,
-                      .sliderValue = 50.0f,
-                      .playbackMode = MODE_CONTINUOUS};
-
   InitGuiStyle();
 
   while (!WindowShouldClose()) {
+    AudioManager(&myState);
     HandleKeyboardShortcuts(&myState);
-
     BeginDrawing();
     // gui.c
     DrawAppInterface(&myState);

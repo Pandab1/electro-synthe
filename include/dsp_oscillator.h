@@ -1,9 +1,11 @@
-#ifndef OSCILLATOR_H
-#define OSCILLATOR_H
+#ifndef DSP_OSCILLATOR_H
+#define DSP_OSCILLATOR_H
 
-#include "config_dsp.h"
+#include "dsp_config.h"
 
-typedef enum { WAVE_SINE, WAVE_SQUARE, WAVE_SAW, WAVE_TRIANGLE } Waveform;
+typedef enum { WAVE_SINE, WAVE_SQUARE, WAVE_SAWTOOTH, WAVE_TRIANGLE } Waveform;
+
+typedef enum PlaybackMode { MODE_CONTINUOUS = 0, MODE_ENVELOPE } PlaybackMode;
 
 typedef struct {
   float phase;
@@ -14,7 +16,7 @@ typedef struct {
 
 // buffer for later vizualisation with raylib
 extern float visBuffer[VIS_BUFFER_SIZE];
-extern int visWriteIndex;
+extern unsigned int visWriteIndex;
 
 float osc_next_sample(Oscillator *o);
 float synth_next_sample(void);

@@ -1,9 +1,9 @@
-#include "config_dsp.h"
+#include "dsp_config.h"
+#include "dsp_oscillator.h"
+#include "dsp_utils.h"
+#include "dsp_voice.h"
 #include "miniaudio.h"
-#include "oscillator.h"
 #include "raylib.h"
-#include "utils_dsp.h"
-#include "voice.h"
 #include <stdlib.h>
 
 typedef struct {
@@ -45,7 +45,7 @@ void keyboard(void) {
 }
 
 void get_visual_buffer(float *dst, int count) {
-  int writeIndex = visWriteIndex;
+  unsigned int writeIndex = visWriteIndex;
   for (int i = 0; i < count; i++)
     dst[i] =
         visBuffer[(writeIndex - count + i + VIS_BUFFER_SIZE) % VIS_BUFFER_SIZE];

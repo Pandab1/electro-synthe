@@ -146,14 +146,14 @@ static void DrawSidebar(AppState *state) {
   DrawText(txtMode, (int)(btnMode.x + btnMode.width / 2 - twMode / 2),
            (int)(btnMode.y + btnMode.height / 2 - fs / 2), fs, RAYWHITE);
 
-  if (CheckCollisionPointRec(GetMousePosition(), btnMode) &&
-      IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
-    // Toggle
-    if (state->playbackMode == MODE_CONTINUOUS)
-      state->playbackMode = MODE_ENVELOPE;
-    else
-      state->playbackMode = MODE_CONTINUOUS;
-  }
+  // if (CheckCollisionPointRec(GetMousePosition(), btnMode) &&
+  //     IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+  //   // Toggle
+  //   if (state->playbackMode == MODE_CONTINUOUS)
+  //     state->playbackMode = MODE_ENVELOPE;
+  //   else
+  //     state->playbackMode = MODE_CONTINUOUS;
+  // }
 
   GuiSetStyle(DEFAULT, TEXT_SIZE, prevTextSize);
 }

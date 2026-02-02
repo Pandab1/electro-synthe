@@ -91,16 +91,17 @@ void DrawOscillatorPage(AppState *state, int zoneX) {
                   hBtn};
 
   if (DrawWaveButton(b1, ICON_WAVE_SINUS, "Sinus",
-                     state->waveform == WAVE_SINE))
-    state->waveform = WAVE_SINE;
+                     state->osc.waveform == WAVE_SINE))
+    state->osc.waveform = WAVE_SINE;
   if (DrawWaveButton(b2, ICON_WAVE_SQUARE, "Carrée",
-                     state->waveform == WAVE_SQUARE))
-    state->waveform = WAVE_SQUARE;
+                     state->osc.waveform == WAVE_SQUARE))
+    state->osc.waveform = WAVE_SQUARE;
   if (DrawWaveButton(b3, ICON_WAVE_TRIANGULAR, "Triangle",
-                     state->waveform == WAVE_TRIANGLE))
-    state->waveform = WAVE_TRIANGLE;
-  if (DrawWaveButton(b4, ICON_WAVE, "Scie", state->waveform == WAVE_SAWTOOTH))
-    state->waveform = WAVE_SAWTOOTH;
+                     state->osc.waveform == WAVE_TRIANGLE))
+    state->osc.waveform = WAVE_TRIANGLE;
+  if (DrawWaveButton(b4, ICON_WAVE, "Scie",
+                     state->osc.waveform == WAVE_SAWTOOTH))
+    state->osc.waveform = WAVE_SAWTOOTH;
 
   float currentY = waveformZone.y + waveformZone.height + 10 * dpi;
 
@@ -108,7 +109,7 @@ void DrawOscillatorPage(AppState *state, int zoneX) {
   DrawRectangleRec(freqGroup, (Color){220, 220, 220, 255});
   DrawRectangleLinesEx(freqGroup, 2, (Color){170, 170, 170, 255});
 
-  DrawSliderWithButtons(freqGroup, "FREQUENCE", &state->frequencyHz, 20.0f,
+  DrawSliderWithButtons(freqGroup, "FREQUENCE", &state->osc.freq, 20.0f,
                         2000.0f, 10.0f, "%.0f Hz");
 
   currentY += freqGroup.height + 10 * dpi;
@@ -191,19 +192,19 @@ void DrawOscillatorPage(AppState *state, int zoneX) {
   float amp = (visualizationZone.height * 0.35f) * state->volume;
 
   const float windowTime = 0.010f;
-  float visibleCycles = state->frequencyHz * windowTime;
+  float visibleCycles = state->osc.freq * windowTime;
 
   if (visibleCycles < 0.25f)
     visibleCycles = 0.25f;
 
   for (int i = 0; i < curveWidth - 1; i++) {
     float y1 = (visualizationZone.y + visualizationZone.height / 2) +
-               CalculateY(i, curveWidth, visibleCycles, amp, state->waveform,
-                          state->visualPhase);
+               CalculateY(i, curveWidth, visibleCycles, amp,
+                          state->osc.waveform, state->visualPhase);
 
     float y2 = (visualizationZone.y + visualizationZone.height / 2) +
                CalculateY(i + 1, curveWidth, visibleCycles, amp,
-                          state->waveform, state->visualPhase);
+                          state->osc.waveform, state->visualPhase);
 
     Vector2 p1 = {visualizationZone.x + 10 + (float)i, y1};
     Vector2 p2 = {visualizationZone.x + 10 + (float)i + 1, y2};
