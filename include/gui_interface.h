@@ -1,8 +1,8 @@
 #ifndef GUI_INTERFACE_H
 #define GUI_INTERFACE_H
 
-#include "dsp_oscillator.h"
 #include "dsp_adsr.h"
+#include "dsp_oscillator.h"
 #include "raylib.h"
 #include <stdbool.h>
 
@@ -24,7 +24,7 @@ typedef struct AppState {
   bool playback;
   float visualPhase;
   float volume;
-  
+
   Oscillator osc;
   PlaybackMode playbackMode;
 

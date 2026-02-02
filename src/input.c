@@ -1,7 +1,7 @@
 #include "input.h"
-#include "raylib.h"
-#include "dsp_voice.h"
 #include "dsp_utils.h"
+#include "dsp_voice.h"
+#include "raylib.h"
 
 #include <math.h>
 
@@ -38,7 +38,7 @@ void HandleKeyboardShortcuts(AppState *state) {
     state->playbackMode = MODE_CONTINUOUS;
   if (state->currentPage == PAGE_PIANO || state->currentPage == PAGE_ENVELOPE)
     state->playbackMode = MODE_ENVELOPE;
-    
+
   // ESC : quit
   if (IsKeyPressed(KEY_ESCAPE)) {
     CloseWindow();

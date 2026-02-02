@@ -1,13 +1,13 @@
 #include "custom_math.h"
+#include "dsp_adsr.h"
+#include "dsp_api.h"
+#include "dsp_voice.h"
 #include "gui_interface.h"
 #include "input.h"
+#include "miniaudio.h"
 #include "raylib.h"
 #include "utils_files.h"
 #include "utils_maths.h"
-#include "miniaudio.h"
-#include "dsp_voice.h"
-#include "dsp_api.h"
-#include "dsp_adsr.h"
 
 #include <stdio.h>
 
@@ -29,7 +29,8 @@ void data_callback(ma_device *device, void *output, const void *input,
   float *out = (float *)output;
   for (ma_uint32 i = 0; i < frameCount; i++) {
     if (!g_mute)
-      out[i] = synth_next_sample() * g_volume; // g_volume is controlled via the gui
+      out[i] =
+          synth_next_sample() * g_volume; // g_volume is controlled via the gui
     else
       out[i] = 0.0f;
   }
@@ -37,14 +38,17 @@ void data_callback(ma_device *device, void *output, const void *input,
 
 int main(void) {
   // INIT APPSTATE
-  AppState myState = {.showMessage = false,
-                      .darkMode = false,
-                      .sliderValue = 50.0f,
-                      .playbackMode = g_continuous ? MODE_CONTINUOUS : MODE_ENVELOPE, // set default mode, see dsp_api.c
-                      .adsr = env, // set default ADSR, see dsp_adsr.c
-                      .volume = g_volume, // set default global volume
-                      .audioActive = true, // audio on by default
-                    };
+  AppState myState = {
+      .showMessage = false,
+      .darkMode = false,
+      .sliderValue = 50.0f,
+      .playbackMode = g_continuous
+                          ? MODE_CONTINUOUS
+                          : MODE_ENVELOPE, // set default mode, see dsp_api.c
+      .adsr = env,                         // set default ADSR, see dsp_adsr.c
+      .volume = g_volume,                  // set default global volume
+      .audioActive = true,                 // audio on by default
+  };
   // DSP INIT
   voice_init();
   // MINIAUDIO INIT

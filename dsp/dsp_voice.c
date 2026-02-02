@@ -38,7 +38,8 @@ void note_off(int midiNote) {
   for (int i = 0; i < MAX_VOICES; i++) {
     if (voices[i].active && voices[i].midiNote == midiNote) {
       adsr_note_off(&voices[i].env);
-      printf("Voice %d OFF: freq=%.2f\n", i, midi_to_freq(midiNote)); // Debug output
+      printf("Voice %d OFF: freq=%.2f\n", i,
+             midi_to_freq(midiNote)); // Debug output
     }
   }
 }

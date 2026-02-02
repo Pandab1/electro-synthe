@@ -13,18 +13,18 @@ Oscillator g_osc = {
 };
 
 void AudioManager(AppState *myState) {
-    // update ADSR env
-    env.attack = myState->adsr.attack;
-    env.decay = myState->adsr.decay;
-    env.sustain = myState->adsr.sustain;
-    env.release = myState->adsr.release;
+  // update ADSR env
+  env.attack = myState->adsr.attack;
+  env.decay = myState->adsr.decay;
+  env.sustain = myState->adsr.sustain;
+  env.release = myState->adsr.release;
 
-    // update global osc
-    g_osc.freq = myState->osc.freq;
-    g_osc.waveform = myState->osc.waveform;
+  // update global osc
+  g_osc.freq = myState->osc.freq;
+  g_osc.waveform = myState->osc.waveform;
 
-    // other
-    g_volume = myState->volume;
-    g_mute = !myState->audioActive;
-    g_continuous = g_continuous = (myState->playbackMode == MODE_CONTINUOUS);
+  // other
+  g_volume = myState->volume;
+  g_mute = !myState->audioActive;
+  g_continuous = g_continuous = (myState->playbackMode == MODE_CONTINUOUS);
 }

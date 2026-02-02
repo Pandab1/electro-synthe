@@ -1,7 +1,7 @@
 #include "gui_piano.h"
+#include "dsp_oscillator.h"
 #include "raygui.h"
 #include "raylib.h"
-#include "dsp_oscillator.h"
 #include <math.h>
 
 // To represent audio output as a visual
@@ -108,7 +108,7 @@ void DrawPianoPage(AppState *state, int zoneX) {
   y += labelFs + (int)(10 * dpi);
 
   // Oscillo
-  int oscWidth  = keyboardWidth;
+  int oscWidth = keyboardWidth;
   int oscHeight = (int)(150 * dpi);
   int oscX = kx;
   int oscY = y;
@@ -122,15 +122,17 @@ void DrawPianoPage(AppState *state, int zoneX) {
   int centerY = oscY + oscHeight / 2;
 
   for (int px = 0; px < oscWidth - 1; px++) {
-      int i1 = (px * VIS_BUFFER_SIZE) / oscWidth;
-      int i2 = ((px + 1) * VIS_BUFFER_SIZE) / oscWidth;
+    int i1 = (px * VIS_BUFFER_SIZE) / oscWidth;
+    int i2 = ((px + 1) * VIS_BUFFER_SIZE) / oscWidth;
 
-      int py1 = centerY - (int)(samples[i1] * gain);
-      int py2 = centerY - (int)(samples[i2] * gain);
+    int py1 = centerY - (int)(samples[i1] * gain);
+    int py2 = centerY - (int)(samples[i2] * gain);
 
-      if (py1 < oscY) py1 = oscY;
-      if (py1 > oscY + oscHeight) py1 = oscY + oscHeight;
+    if (py1 < oscY)
+      py1 = oscY;
+    if (py1 > oscY + oscHeight)
+      py1 = oscY + oscHeight;
 
-      DrawLine(oscX + px, py1, oscX + px + 1, py2, GREEN);
+    DrawLine(oscX + px, py1, oscX + px + 1, py2, GREEN);
   }
 }

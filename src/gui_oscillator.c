@@ -99,7 +99,8 @@ void DrawOscillatorPage(AppState *state, int zoneX) {
   if (DrawWaveButton(b3, ICON_WAVE_TRIANGULAR, "Triangle",
                      state->osc.waveform == WAVE_TRIANGLE))
     state->osc.waveform = WAVE_TRIANGLE;
-  if (DrawWaveButton(b4, ICON_WAVE, "Scie", state->osc.waveform == WAVE_SAWTOOTH))
+  if (DrawWaveButton(b4, ICON_WAVE, "Scie",
+                     state->osc.waveform == WAVE_SAWTOOTH))
     state->osc.waveform = WAVE_SAWTOOTH;
 
   float currentY = waveformZone.y + waveformZone.height + 10 * dpi;
@@ -198,8 +199,8 @@ void DrawOscillatorPage(AppState *state, int zoneX) {
 
   for (int i = 0; i < curveWidth - 1; i++) {
     float y1 = (visualizationZone.y + visualizationZone.height / 2) +
-               CalculateY(i, curveWidth, visibleCycles, amp, state->osc.waveform,
-                          state->visualPhase);
+               CalculateY(i, curveWidth, visibleCycles, amp,
+                          state->osc.waveform, state->visualPhase);
 
     float y2 = (visualizationZone.y + visualizationZone.height / 2) +
                CalculateY(i + 1, curveWidth, visibleCycles, amp,
