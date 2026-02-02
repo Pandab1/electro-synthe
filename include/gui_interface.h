@@ -16,8 +16,6 @@ typedef enum PageApp {
   PAGE_PIANO = 4
 } PageApp;
 
-typedef enum PlaybackMode { MODE_CONTINUOUS = 0, MODE_ENVELOPE } PlaybackMode;
-
 // Global application state (UI + parameters)
 typedef struct AppState {
   bool darkMode;
@@ -47,6 +45,9 @@ typedef struct AppState {
   bool showMessage;
   float sliderValue;
 } AppState;
+
+// // Global AppState
+// extern AppState myState;
 
 // GUI Functions
 void InitGuiStyle(void);

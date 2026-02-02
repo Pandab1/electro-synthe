@@ -4,7 +4,7 @@
 #include "dsp_voice.h"
 #include <math.h>
 
-int visWriteIndex = 0;
+unsigned int visWriteIndex = 0; 
 float visBuffer[VIS_BUFFER_SIZE] = {0};
 
 // Returns the next sample from the oscillator
@@ -42,14 +42,15 @@ float synth_next_sample(void) {
     float envValue = adsr_process(&voices[i].env);
 
     mix += oscSample * envValue;
-    mix = soft_clip(mix);
 
     if (voices[i].env.stage == ENV_IDLE)
       voices[i].active = 0;
   }
+  
+  mix = soft_clip(mix);
 
-  int index = visWriteIndex++;
-  visBuffer[index % VIS_BUFFER_SIZE] = mix;
+  visBuffer[visWriteIndex % VIS_BUFFER_SIZE] = mix;
+  visWriteIndex++;
 
   return mix;
 }

@@ -3,6 +3,9 @@
 
 #include "gui_interface.h"
 
-void AudioManager(AppState *state, ADSR *env);
+extern float g_volume;
+extern bool g_mute;
+
+void AudioManager(AppState *state);
 
 #endif

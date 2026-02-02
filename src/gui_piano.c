@@ -1,10 +1,15 @@
 #include "gui_piano.h"
 #include "raygui.h"
 #include "raylib.h"
+#include "dsp_oscillator.h"
 #include <math.h>
 
-static float NoteToFreq(int midiNote) {
-  return 440.0f * powf(2.0f, (midiNote - 69) / 12.0f);
+// To represent audio output as a visual
+void get_visual_buffer(float *dst, int count) {
+  unsigned int writeIndex = visWriteIndex;
+  for (int i = 0; i < count; i++)
+    dst[i] =
+        visBuffer[(writeIndex - count + i + VIS_BUFFER_SIZE) % VIS_BUFFER_SIZE];
 }
 
 void DrawPianoPage(AppState *state, int zoneX) {
@@ -18,13 +23,13 @@ void DrawPianoPage(AppState *state, int zoneX) {
   DrawText("Clavier:", x, y, (int)(18 * dpi), GRAY);
   y += (int)(30 * dpi);
 
-  DrawText("Q W E R T Y U  -> Do Re Mi Fa Sol La Si", x, y, (int)(16 * dpi),
+  DrawText("A Z E R T Y U  -> Do Re Mi Fa Sol La Si", x, y, (int)(16 * dpi),
            DARKGRAY);
   y += (int)(25 * dpi);
 
-  DrawText("Clic souris ou clavier sur les touches = joue la note", x, y,
-           (int)(16 * dpi), DARKGRAY);
-  y += (int)(30 * dpi);
+  // DrawText("Clic souris ou clavier sur les touches = joue la note", x, y,
+  //          (int)(16 * dpi), DARKGRAY);
+  // y += (int)(30 * dpi);
 
   // Keyboard (C4 -> B4) : 7 white keys
   int keyW = (int)(60 * dpi);
@@ -35,7 +40,7 @@ void DrawPianoPage(AppState *state, int zoneX) {
 
   const int whiteMidi[7] = {60, 62, 64, 65, 67, 69, 71}; // C4 D4 E4 F4 G4 A4 B4
   const char *whiteLabel[7] = {"Do", "Re", "Mi", "Fa", "Sol", "La", "Si"};
-  const char *whiteKeyChar[7] = {"Q", "W", "E", "R", "T", "Y", "U"};
+  const char *whiteKeyChar[7] = {"A", "Z", "E", "R", "T", "Y", "U"};
   const int whiteKeyCodes[7] = {KEY_Q, KEY_W, KEY_E, KEY_R,
                                 KEY_T, KEY_Y, KEY_U};
 
@@ -73,21 +78,59 @@ void DrawPianoPage(AppState *state, int zoneX) {
              (int)(wr.x + wr.width / 2 - MeasureText(whiteKeyChar[i], fs2) / 2),
              (int)(wr.y + wr.height - fs1 - fs2 - 16), fs2, GRAY);
 
-    // Clic or Key = play note
-    if (active) {
-      state->frequencyHz = NoteToFreq(whiteMidi[i]);
-      anyNoteTriggered = true;
-    }
+    // // Clic or Key = play note
+    // if (active) {
+    //   state->frequencyHz = NoteToFreq(whiteMidi[i]);
+    //   anyNoteTriggered = true;
+    // }
   }
 
-  if (anyNoteTriggered) {
-    state->playback = true;
-    state->audioActive = true;
-  } else {
-    state->playback = false;
-  }
+  // if (anyNoteTriggered) {
+  //   state->playback = true;
+  //   state->audioActive = true;
+  // } else {
+  //   state->playback = false;
+  // }
 
+  float samples[VIS_BUFFER_SIZE];
+  get_visual_buffer(samples, VIS_BUFFER_SIZE);
+
+  // Space before
   y = ky + keyH + (int)(20 * dpi);
-  DrawText(TextFormat("Frequence actuelle: %.2f Hz", state->frequencyHz), x, y,
-           (int)(18 * dpi), DARKGRAY);
+
+  // Text
+  const char *label = "VISUALISATION";
+  int labelFs = (int)(16 * dpi);
+  int keyboardWidth = 7 * keyW;
+  DrawText(label, kx, y, labelFs, DARKGRAY);
+
+  // Space after
+  y += labelFs + (int)(10 * dpi);
+
+  // Oscillo
+  int oscWidth  = keyboardWidth;
+  int oscHeight = (int)(150 * dpi);
+  int oscX = kx;
+  int oscY = y;
+
+  // Background
+  DrawRectangle(oscX, oscY, oscWidth, oscHeight, BLACK);
+  DrawRectangleLines(oscX, oscY, oscWidth, oscHeight, DARKGRAY);
+
+  // Waveform
+  float gain = 100.0f * dpi;
+  int centerY = oscY + oscHeight / 2;
+
+  for (int px = 0; px < oscWidth - 1; px++) {
+      int i1 = (px * VIS_BUFFER_SIZE) / oscWidth;
+      int i2 = ((px + 1) * VIS_BUFFER_SIZE) / oscWidth;
+
+      int py1 = centerY - (int)(samples[i1] * gain);
+      int py2 = centerY - (int)(samples[i2] * gain);
+
+      if (py1 < oscY) py1 = oscY;
+      if (py1 > oscY + oscHeight) py1 = oscY + oscHeight;
+
+      DrawLine(oscX + px, py1, oscX + px + 1, py2, GREEN);
+  }
 }

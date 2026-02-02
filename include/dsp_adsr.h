@@ -1,6 +1,7 @@
 #ifndef DSP_ADSR_H
 #define DSP_ADSR_H
 
+#define ENV_THRESHOLD 0.0001f // Silence threshold
 typedef enum {
   ENV_IDLE,
   ENV_ATTACK,

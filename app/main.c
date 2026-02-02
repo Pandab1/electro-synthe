@@ -23,18 +23,31 @@ enum WaveType { SIN, SQU, ST, TRI };
 void generate_sound(FILE *f, u32 num_sample, u32 num_notes,
                     struct Notes notes[], enum WaveType type);
 
-//MINIAUDIO CALLBACK
+// MINIAUDIO CALLBACK
 void data_callback(ma_device *device, void *output, const void *input,
                    ma_uint32 frameCount) {
   float *out = (float *)output;
-  for (ma_uint32 i = 0; i < frameCount; i++)
-    out[i] = synth_next_sample();
+  for (ma_uint32 i = 0; i < frameCount; i++) {
+    if (!g_mute)
+      out[i] = synth_next_sample() * g_volume; // g_volume is controlled via the gui
+    else
+      out[i] = 0.0f;
+  }
 }
 
 int main(void) {
-  //DSP INIT
+  // INIT APPSTATE
+  AppState myState = {.showMessage = false,
+                      .darkMode = false,
+                      .sliderValue = 50.0f,
+                      .playbackMode = MODE_CONTINUOUS, // continuous mode by default
+                      .adsr = env, // set default ADSR
+                      .volume = g_volume, // set default global volume
+                      .audioActive = true, // audio on by default
+                    };
+  // DSP INIT
   voice_init();
-  //MINIAUDIO INIT
+  // MINIAUDIO INIT
   ma_device_config config = ma_device_config_init(ma_device_type_playback);
   config.playback.format = ma_format_f32;
   config.playback.channels = 1;
@@ -55,18 +68,11 @@ int main(void) {
   SetWindowMinSize(780, 600);
   SetTargetFPS(60);
 
-  // Init state
-  AppState myState = {.showMessage = false,
-                      .darkMode = false,
-                      .sliderValue = 50.0f,
-                      .playbackMode = MODE_CONTINUOUS};
-
   InitGuiStyle();
 
   while (!WindowShouldClose()) {
-    AudioManager(&myState, &env);
+    AudioManager(&myState);
     HandleKeyboardShortcuts(&myState);
-
     BeginDrawing();
     // gui.c
     DrawAppInterface(&myState);

@@ -78,13 +78,13 @@ void HandleKeyboardShortcuts(AppState *state) {
 
     for (int i = 0; i < 8; i++) {
       if (IsKeyPressed(notes[i].key)) {
-        note_on(midi_to_freq(notes[i].midiNote));
-        state->playback = true;
-        state->audioActive = true;
+        note_on(notes[i].midiNote);
+        // state->playback = true;
+        // state->audioActive = true;
       }
       if (IsKeyReleased(notes[i].key)) {
-        note_off(midi_to_freq(notes[i].midiNote));
-        state->playback = false;
+        note_off(notes[i].midiNote);
+        // state->playback = false;
       }
     }
 
